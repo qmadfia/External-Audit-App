@@ -40,24 +40,20 @@ CREATE TABLE IF NOT EXISTS areas (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Seed default shoe areas
+-- Seed default shoe areas / defect locations
 INSERT INTO areas (name) VALUES 
-    ('Upper'),
-    ('Toe Box'),
-    ('Vamp'),
-    ('Eyestay'),
-    ('Tongue'),
-    ('Quarter'),
+    ('Quarter Medial'),
+    ('Quarter Lateral'),
+    ('Forefoot Medial'),
+    ('Forefoot Lateral'),
+    ('Toe'),
+    ('Heel'),
+    ('Heel Lateral'),
+    ('Heel Medial'),
+    ('Lace'),
+    ('Interior'),
     ('Collar'),
-    ('Heel Counter / Backtab'),
-    ('Midsole'),
-    ('Outsole'),
-    ('Foxing'),
-    ('Insole / Sockliner'),
-    ('Lining'),
-    ('Laces / Eyelets'),
-    ('Inner Box / Packaging'),
-    ('Other')
+    ('Bottom Side')
 ON CONFLICT (name) DO NOTHING;
 
 -- 4. TABEL MASTER DEFECT TYPES (Admin Manageable)

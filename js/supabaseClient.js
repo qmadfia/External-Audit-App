@@ -15,10 +15,9 @@
         ...Array.from({length: 16}, (_, i) => String(201 + i))
     ];
     const DEFAULT_AREAS = [
-        'Upper', 'Toe Box', 'Vamp', 'Eyestay', 'Tongue', 'Quarter',
-        'Collar', 'Heel Counter / Backtab', 'Midsole', 'Outsole',
-        'Foxing', 'Insole / Sockliner', 'Lining', 'Laces / Eyelets',
-        'Inner Box / Packaging', 'Other'
+        'Quarter Medial', 'Quarter Lateral', 'Forefoot Medial', 'Forefoot Lateral',
+        'Toe', 'Heel', 'Heel Lateral', 'Heel Medial',
+        'Lace', 'Interior', 'Collar', 'Bottom Side'
     ];
 
     // Default Supabase Project Credentials
