@@ -37,11 +37,32 @@ Aplikasi inspeksi sepatu dan audit lini produksi (*Line Walk Through*) berbasis 
 
 ---
 
+## 📁 Struktur Folder Proyek
+
+```text
+External-Audit-App/
+├── css/
+│   └── styles.css          # Sistem Desain Claymorphism 3D & Gestalt
+├── js/
+│   ├── script.js           # Logika utama aplikasi inspeksi & reporting
+│   ├── admin.js            # Logika panel administratif & audit trail
+│   ├── supabaseClient.js   # Client service Supabase & offline fallback
+│   └── database.js         # Master data style awal (~3340 item)
+├── database/
+│   └── schema.sql          # Skrip inisialisasi tabel & RLS Supabase
+├── index.html              # Halaman utama inspeksi sepatu
+├── admin.html              # Halaman panel admin
+├── .gitignore              # Proteksi file kredensial lokal (.env)
+└── README.md               # Dokumentasi proyek
+```
+
+---
+
 ## 🚀 Panduan Setup Database (Supabase)
 
 1. Buat project baru di [Supabase](https://supabase.com).
 2. Buka menu **SQL Editor** pada dashboard Supabase.
-3. Buka file `schema.sql`, salin seluruh kodenya, dan jalankan (**Run**).
+3. Buka file `database/schema.sql`, salin seluruh kodenya, dan jalankan (**Run**).
 4. Buka halaman `admin.html`, pilih tab **⚙️ Pengaturan Supabase**.
 5. Masukkan **Project URL** dan **Public Anon Key**, lalu klik **Simpan & Hubungkan**.
 6. Pada tab **👟 Style & Model**, klik **🚀 Sync database.js ke Supabase** untuk mengunggah master data style awal.
