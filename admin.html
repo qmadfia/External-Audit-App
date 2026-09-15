@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 </head>
+
 <body>
     <div class="container">
         <!-- Header -->
@@ -48,38 +50,48 @@
             <section id="tab-styles" class="tab-panel active">
                 <div class="card">
                     <h3 class="card-title">Tambah Style Number & Model Baru</h3>
-                    <form id="form-add-style" class="form-grid" style="grid-template-columns: 1fr 1fr auto; align-items: flex-end;">
+                    <form id="form-add-style" class="form-grid"
+                        style="grid-template-columns: 1fr 1fr auto; align-items: flex-end;">
                         <div class="form-group">
                             <label for="input-style-number">Style Number</label>
                             <input type="text" id="input-style-number" placeholder="Contoh: 343738-013" required>
                         </div>
                         <div class="form-group">
                             <label for="input-model-name">Nama Model</label>
-                            <input type="text" id="input-model-name" placeholder="Contoh: NIKE DYNAMO FREE (PS)" required>
+                            <input type="text" id="input-model-name" placeholder="Contoh: NIKE DYNAMO FREE (PS)"
+                                required>
                         </div>
                         <button type="submit" class="btn btn-primary" style="height: 48px;">+ Tambah Style</button>
                     </form>
                 </div>
 
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-                        <h3 class="card-title" style="margin-bottom: 0;">Daftar Master Style Number (<span id="style-total-count">0</span>)</h3>
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                        <h3 class="card-title" style="margin-bottom: 0;">Daftar Master Style Number (<span
+                                id="style-total-count">0</span>)</h3>
                         <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="text" id="style-search-input" class="clay-input" placeholder="🔍 Cari Style / Model..." style="max-width: 250px; padding: 8px 14px;">
-                            <button id="btn-seed-styles" class="btn btn-secondary btn-sm" title="Upload ~3340 style bawaan dari database.js ke Supabase">
+                            <input type="text" id="style-search-input" class="clay-input"
+                                placeholder="🔍 Cari Style / Model..." style="max-width: 250px; padding: 8px 14px;">
+                            <button id="btn-seed-styles" class="btn btn-secondary btn-sm"
+                                title="Upload ~3340 style bawaan dari database.js ke Supabase">
                                 🚀 Sync database.js ke Supabase
                             </button>
                         </div>
                     </div>
 
                     <!-- Progress Bar for Seeding -->
-                    <div id="seed-progress-container" style="display: none; margin-bottom: 16px; background: #edf2f7; border-radius: 12px; padding: 10px;">
-                        <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">
+                    <div id="seed-progress-container"
+                        style="display: none; margin-bottom: 16px; background: #edf2f7; border-radius: 12px; padding: 10px;">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">
                             <span>Mengunggah data awal ke Supabase...</span>
                             <span id="seed-progress-text">0%</span>
                         </div>
                         <div style="height: 10px; background: #cbd5e1; border-radius: 6px; overflow: hidden;">
-                            <div id="seed-progress-bar" style="height: 100%; width: 0%; background: var(--primary); transition: width 0.2s;"></div>
+                            <div id="seed-progress-bar"
+                                style="height: 100%; width: 0%; background: var(--primary); transition: width 0.2s;">
+                            </div>
                         </div>
                     </div>
 
@@ -93,7 +105,10 @@
                                 </tr>
                             </thead>
                             <tbody id="styles-table-body">
-                                <tr><td colspan="3" style="text-align: center; color: var(--text-muted);">Memuat data style...</td></tr>
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: var(--text-muted);">Memuat data
+                                        style...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -114,10 +129,12 @@
                     <div class="card">
                         <h3 class="card-title">Kategori Validasi</h3>
                         <form id="form-add-category" style="display: flex; gap: 8px; margin-bottom: 16px;">
-                            <input type="text" id="input-category-name" class="clay-input" placeholder="Nama Kategori (contoh: HFPA, FTT)" required>
+                            <input type="text" id="input-category-name" class="clay-input"
+                                placeholder="Nama Kategori (contoh: HFPA, FTT)" required>
                             <button type="submit" class="btn btn-primary btn-sm">+ Tambah</button>
                         </form>
-                        <ul id="categories-list" style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
+                        <ul id="categories-list"
+                            style="list-style: none; display: flex; flex-direction: column; gap: 8px;">
                             <li>Memuat kategori...</li>
                         </ul>
                     </div>
@@ -126,10 +143,12 @@
                     <div class="card">
                         <h3 class="card-title">Line Produksi</h3>
                         <form id="form-add-line" style="display: flex; gap: 8px; margin-bottom: 16px;">
-                            <input type="text" id="input-line-name" class="clay-input" placeholder="Nama/Nomor Line (contoh: 101, 205)" required>
+                            <input type="text" id="input-line-name" class="clay-input"
+                                placeholder="Nama/Nomor Line (contoh: 101, 205)" required>
                             <button type="submit" class="btn btn-primary btn-sm">+ Tambah</button>
                         </form>
-                        <div id="lines-container" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 250px; overflow-y: auto; padding: 4px;">
+                        <div id="lines-container"
+                            style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 250px; overflow-y: auto; padding: 4px;">
                             Memuat lines...
                         </div>
                     </div>
@@ -139,7 +158,8 @@
                 <div class="card" style="margin-top: 20px;">
                     <h3 class="card-title">Master Area Sepatu (Defect Location)</h3>
                     <form id="form-add-area" style="display: flex; gap: 8px; margin-bottom: 16px; max-width: 500px;">
-                        <input type="text" id="input-area-name" class="clay-input" placeholder="Nama Area (contoh: Toe Box, Midsole)" required>
+                        <input type="text" id="input-area-name" class="clay-input"
+                            placeholder="Nama Area (contoh: Toe Box, Midsole)" required>
                         <button type="submit" class="btn btn-primary btn-sm">+ Tambah Area</button>
                     </form>
                     <div id="areas-container" style="display: flex; flex-wrap: wrap; gap: 8px;">
@@ -150,11 +170,14 @@
                 <!-- Master Tipe Defect (Baru untuk Dropdown Pilihan) -->
                 <div class="card" style="margin-top: 20px;">
                     <h3 class="card-title">Master Tipe Defect (Pilihan Dropdown Inspeksi)</h3>
-                    <form id="form-add-defect-type" style="display: flex; gap: 8px; margin-bottom: 16px; max-width: 600px;">
-                        <input type="text" id="input-defect-type-name" class="clay-input" placeholder="Nama Tipe Defect (contoh: Over cement, Broken stitch)" required>
+                    <form id="form-add-defect-type"
+                        style="display: flex; gap: 8px; margin-bottom: 16px; max-width: 600px;">
+                        <input type="text" id="input-defect-type-name" class="clay-input"
+                            placeholder="Nama Tipe Defect (contoh: Over cement, Broken stitch)" required>
                         <button type="submit" class="btn btn-primary btn-sm">+ Tambah Defect</button>
                     </form>
-                    <div id="defect-types-container" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 280px; overflow-y: auto; padding: 4px;">
+                    <div id="defect-types-container"
+                        style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 280px; overflow-y: auto; padding: 4px;">
                         Memuat tipe defect...
                     </div>
                 </div>
@@ -163,9 +186,11 @@
             <!-- TAB 3: AUDIT TRAIL & REPORTING -->
             <section id="tab-audit" class="tab-panel">
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
                         <h3 class="card-title" style="margin-bottom: 0;">Riwayat Inspeksi (Audit Trail)</h3>
-                        <input type="text" id="audit-search-input" class="clay-input" placeholder="🔍 Cari Kode, Auditor, Style..." style="max-width: 280px;">
+                        <input type="text" id="audit-search-input" class="clay-input"
+                            placeholder="🔍 Cari Kode, Auditor, Style..." style="max-width: 280px;">
                     </div>
 
                     <div class="table-wrapper">
@@ -184,7 +209,10 @@
                                 </tr>
                             </thead>
                             <tbody id="audit-table-body">
-                                <tr><td colspan="9" style="text-align: center; color: var(--text-muted);">Memuat riwayat inspeksi...</td></tr>
+                                <tr>
+                                    <td colspan="9" style="text-align: center; color: var(--text-muted);">Memuat riwayat
+                                        inspeksi...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -196,28 +224,38 @@
                 <div class="card" style="max-width: 750px; margin: 0 auto;">
                     <h3 class="card-title">Konfigurasi Koneksi Supabase</h3>
                     <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">
-                        Masukkan Project URL dan Public Anon Key dari project Supabase Anda (bisa dilihat di dashboard Supabase: <strong>Project Settings → API</strong>).
+                        Masukkan Project URL dan Public Anon Key dari project Supabase Anda (bisa dilihat di dashboard
+                        Supabase: <strong>Project Settings → API</strong>).
                     </p>
 
                     <form id="form-supabase-config">
                         <div class="form-group" style="margin-bottom: 16px;">
                             <label for="cfg-supabase-url">Supabase Project URL</label>
-                            <input type="url" id="cfg-supabase-url" placeholder="https://xyzcompany.supabase.co" required>
+                            <input type="url" id="cfg-supabase-url" placeholder="https://xyzcompany.supabase.co"
+                                required>
                         </div>
                         <div class="form-group" style="margin-bottom: 24px;">
                             <label for="cfg-supabase-key">Supabase Public Anon Key</label>
-                            <textarea id="cfg-supabase-key" class="clay-input" rows="3" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required style="font-family: monospace; font-size: 0.85rem;"></textarea>
+                            <textarea id="cfg-supabase-key" class="clay-input" rows="3"
+                                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required
+                                style="font-family: monospace; font-size: 0.85rem;"></textarea>
                         </div>
                         <div style="display: flex; gap: 12px; align-items: center;">
                             <button type="submit" class="btn btn-primary">Simpan & Hubungkan</button>
-                            <button type="button" id="btn-test-connection" class="btn btn-secondary">⚡ Uji Koneksi</button>
+                            <button type="button" id="btn-test-connection" class="btn btn-secondary">⚡ Uji
+                                Koneksi</button>
                         </div>
                     </form>
 
-                    <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: var(--radius-md); box-shadow: var(--clay-input-shadow);">
-                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">💡 Petunjuk Skema Database</h4>
+                    <div
+                        style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: var(--radius-md); box-shadow: var(--clay-input-shadow);">
+                        <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">💡 Petunjuk Skema Database
+                        </h4>
                         <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
-                            Pastikan Anda sudah menjalankan script <code>schema.sql</code> di menu <strong>SQL Editor</strong> Supabase agar tabel <code>categories</code>, <code>lines</code>, <code>areas</code>, <code>styles</code>, <code>inspections</code>, <code>inspection_defects</code>, dan <code>admin_users</code> terbuat otomatis.
+                            Pastikan Anda sudah menjalankan script <code>schema.sql</code> di menu <strong>SQL
+                                Editor</strong> Supabase agar tabel <code>categories</code>, <code>lines</code>,
+                            <code>areas</code>, <code>styles</code>, <code>inspections</code>,
+                            <code>inspection_defects</code>, dan <code>admin_users</code> terbuat otomatis.
                         </p>
                     </div>
                 </div>
@@ -228,10 +266,12 @@
                 <div class="card">
                     <h3 class="card-title">Daftarkan Admin Baru ke Supabase</h3>
                     <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
-                        Tambahkan akun administrator baru ke tabel <code>admin_users</code> di database Supabase untuk memvalidasi akses panel ini.
+                        Tambahkan akun administrator baru ke tabel <code>admin_users</code> di database Supabase untuk
+                        memvalidasi akses panel ini.
                     </p>
 
-                    <form id="form-register-admin" class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto; align-items: flex-end;">
+                    <form id="form-register-admin" class="form-grid"
+                        style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto; align-items: flex-end;">
                         <div class="form-group">
                             <label for="reg-admin-username">Username</label>
                             <input type="text" id="reg-admin-username" placeholder="Contoh: audit_lead" required>
@@ -242,7 +282,8 @@
                         </div>
                         <div class="form-group">
                             <label for="reg-admin-password">Password</label>
-                            <input type="password" id="reg-admin-password" placeholder="Minimal 6 karakter" required minlength="6">
+                            <input type="password" id="reg-admin-password" placeholder="Minimal 6 karakter" required
+                                minlength="6">
                         </div>
                         <div class="form-group">
                             <label for="reg-admin-role">Peran (Role)</label>
@@ -270,18 +311,24 @@
                                 </tr>
                             </thead>
                             <tbody id="table-admin-users-body">
-                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Memuat daftar admin...</td></tr>
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: var(--text-muted);">Memuat daftar
+                                        admin...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
                 <div class="card" style="background: #f8fafc;">
-                    <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">📋 Skrip SQL Registrasi Admin (Supabase SQL Editor)</h4>
+                    <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">📋 Skrip SQL Registrasi Admin
+                        (Supabase SQL Editor)</h4>
                     <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
-                        File <code>database/admin_auth.sql</code> berisi query lengkap untuk membuat tabel <code>admin_users</code>, Row Level Security (RLS), dan akun default di Supabase SQL Editor.
+                        File <code>database/admin_auth.sql</code> berisi query lengkap untuk membuat tabel
+                        <code>admin_users</code>, Row Level Security (RLS), dan akun default di Supabase SQL Editor.
                     </p>
-                    <textarea readonly rows="5" class="clay-input" style="font-family: monospace; font-size: 0.8rem; background: #ffffff;">CREATE TABLE IF NOT EXISTS admin_users (
+                    <textarea readonly rows="5" class="clay-input"
+                        style="font-family: monospace; font-size: 0.8rem; background: #ffffff;">CREATE TABLE IF NOT EXISTS admin_users (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
     password_hash TEXT NOT NULL,
@@ -302,26 +349,25 @@ CREATE POLICY "Allow anon admin_users" ON admin_users FOR ALL TO anon USING (tru
             <img src="assets/logo.png" alt="Logo" class="auth-logo">
             <h2>Login Administrator</h2>
             <p>Masukkan kredensial admin untuk mengakses panel manajemen</p>
-            
+
             <div id="auth-error-msg" class="auth-error-msg"></div>
 
             <form id="form-admin-login">
                 <div class="form-group" style="margin-bottom: 14px; text-align: left;">
                     <label for="login-username">Username</label>
-                    <input type="text" id="login-username" class="clay-input" placeholder="Ketik username admin..." required autocomplete="username">
+                    <input type="text" id="login-username" class="clay-input" placeholder="Ketik username admin..."
+                        required autocomplete="username">
                 </div>
                 <div class="form-group" style="margin-bottom: 20px; text-align: left;">
                     <label for="login-password">Password</label>
-                    <input type="password" id="login-password" class="clay-input" placeholder="Ketik password..." required autocomplete="current-password">
+                    <input type="password" id="login-password" class="clay-input" placeholder="Ketik password..."
+                        required autocomplete="current-password">
                 </div>
-                <button type="submit" class="btn btn-primary btn-block" style="width: 100%; justify-content: center; padding: 12px;">
+                <button type="submit" class="btn btn-primary btn-block"
+                    style="width: 100%; justify-content: center; padding: 12px;">
                     <span>🔐</span> Masuk ke Panel Admin
                 </button>
             </form>
-
-            <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); background: #f1f5f9; padding: 10px; border-radius: var(--radius-sm);">
-                <span>Default Superadmin: <strong>admin</strong> | Password: <strong>admin123</strong></span>
-            </div>
         </div>
     </div>
 
@@ -330,11 +376,13 @@ CREATE POLICY "Allow anon admin_users" ON admin_users FOR ALL TO anon USING (tru
         <div class="modal-content" style="max-width: 750px;">
             <div class="modal-header">
                 <h4 class="modal-title" id="admin-modal-title">Detail Inspeksi</h4>
-                <button id="admin-modal-close" class="btn btn-sm btn-secondary" style="border-radius: 50%; width: 32px; height: 32px; padding: 0;">✕</button>
+                <button id="admin-modal-close" class="btn btn-sm btn-secondary"
+                    style="border-radius: 50%; width: 32px; height: 32px; padding: 0;">✕</button>
             </div>
             <div id="admin-modal-body" style="max-height: 60vh; overflow-y: auto;"></div>
             <div class="modal-actions" id="admin-modal-actions">
-                <button id="admin-modal-download-btn" class="btn btn-success">📊 Download Excel (Format Kebawah)</button>
+                <button id="admin-modal-download-btn" class="btn btn-success">📊 Download Excel (Format
+                    Kebawah)</button>
                 <button id="admin-modal-cancel-btn" class="btn btn-secondary">Tutup</button>
             </div>
         </div>
@@ -350,4 +398,5 @@ CREATE POLICY "Allow anon admin_users" ON admin_users FOR ALL TO anon USING (tru
     <script src="js/supabaseClient.js"></script>
     <script src="js/admin.js"></script>
 </body>
+
 </html>
