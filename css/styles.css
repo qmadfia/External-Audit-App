@@ -732,19 +732,25 @@ tbody td:last-child {
     justify-content: center;
     z-index: 10000;
     padding: 16px;
+    overflow-y: auto;
 }
 
 .modal-content {
     background: #ffffff;
     border-radius: var(--radius-xl);
-    padding: 30px;
+    padding: 24px 28px;
     max-width: 600px;
     width: 100%;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
     box-shadow: 
         0 20px 40px rgba(0, 0, 0, 0.2),
         var(--clay-card-shadow);
     border: 1px solid rgba(255, 255, 255, 0.8);
     animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-sizing: border-box;
+    margin: auto;
 }
 
 @keyframes modalPop {
@@ -756,13 +762,31 @@ tbody td:last-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
+    flex-shrink: 0;
 }
 
 .modal-title {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--text-primary);
+}
+
+.modal-body {
+    overflow-y: auto;
+    flex: 1 1 auto;
+    padding-right: 6px;
+    margin-bottom: 6px;
+}
+
+/* Custom scrollbar untuk modal body */
+.modal-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.5);
+    border-radius: 4px;
 }
 
 .modal-actions {
@@ -770,7 +794,10 @@ tbody td:last-child {
     align-items: center;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+    flex-shrink: 0;
 }
 
 /* NG DEFECT FLOW STYLES */
@@ -1140,6 +1167,8 @@ tbody td:last-child {
     padding: 12px;
     box-shadow: var(--clay-input-shadow);
     min-height: 60px;
+    max-height: 180px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
