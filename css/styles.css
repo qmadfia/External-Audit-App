@@ -105,6 +105,21 @@ header.app-header {
     gap: 14px;
 }
 
+.brand-logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-shrink: 0;
+}
+
+.brand-logo:hover {
+    transform: scale(1.06);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+}
+
 .brand-badge {
     background: linear-gradient(135deg, #6366f1, #4f46e5);
     color: white;

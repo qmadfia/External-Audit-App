@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" width="120" alt="External Audit App Logo" style="border-radius: 20px;">
+</p>
+
 # External Audit-App (Line Walk Through)
 
 Aplikasi inspeksi sepatu dan audit lini produksi (*Line Walk Through*) berbasis web dengan estetika **Claymorphism 3D**, integrasi **Supabase Cloud**, pelaporan format kebawah (*Tall / Normalized Pivot-Ready*), dan panel administratif lengkap tanpa perlu login.
