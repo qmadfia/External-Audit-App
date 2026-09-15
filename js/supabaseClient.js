@@ -255,7 +255,76 @@
         },
 
         // ==========================================
-        // 4. STYLES & MODELS
+        // 4. MASTER DEFECT TYPES
+        // ==========================================
+        async getDefectTypes() {
+            if (supabaseInstance) {
+                try {
+                    const { data, error } = await supabaseInstance
+                        .from('defect_types')
+                        .select('*')
+                        .order('name', { ascending: true });
+                    if (!error && data && data.length > 0) return data;
+                } catch (e) {
+                    console.warn('Fallback to default defect types due to Supabase error:', e);
+                }
+            }
+            const local = JSON.parse(localStorage.getItem('lwt_custom_defects') || 'null');
+            if (local && local.length > 0) return local;
+            const defaults = window.defectTypes || [];
+            return defaults.map((name, id) => ({ id: id + 1, name }));
+        },
+
+        async addDefectType(name) {
+            const cleanName = name.trim();
+            if (!cleanName) throw new Error('Nama Defect tidak boleh kosong');
+            if (supabaseInstance) {
+                try {
+                    const { data, error } = await supabaseInstance
+                        .from('defect_types')
+                        .insert([{ name: cleanName }])
+                        .select();
+                    if (!error && data && data[0]) return data[0];
+                } catch (err) {
+                    console.warn('Supabase defect_types insert failed, saving to local:', err);
+                }
+            }
+            const list = await this.getDefectTypes();
+            if (list.some(d => d.name.toLowerCase() === cleanName.toLowerCase())) {
+                throw new Error('Tipe defect sudah ada');
+            }
+            const newDefect = { id: Date.now(), name: cleanName };
+            list.push(newDefect);
+            localStorage.setItem('lwt_custom_defects', JSON.stringify(list));
+            if (window.defectTypes && !window.defectTypes.includes(cleanName)) {
+                window.defectTypes.push(cleanName);
+            }
+            return newDefect;
+        },
+
+        async deleteDefectType(id, name) {
+            if (supabaseInstance) {
+                try {
+                    const { error } = await supabaseInstance
+                        .from('defect_types')
+                        .delete()
+                        .eq('id', id);
+                    if (!error) return true;
+                } catch (e) {
+                    console.warn('Supabase delete defect error:', e);
+                }
+            }
+            let list = await this.getDefectTypes();
+            list = list.filter(d => d.id != id && d.name !== name);
+            localStorage.setItem('lwt_custom_defects', JSON.stringify(list));
+            if (window.defectTypes && name) {
+                window.defectTypes = window.defectTypes.filter(x => x !== name);
+            }
+            return true;
+        },
+
+        // ==========================================
+        // 5. STYLES & MODELS
         // ==========================================
         async getStyles({ search = '', limit = 50, page = 1 } = {}) {
             if (supabaseInstance) {

@@ -60,7 +60,69 @@ INSERT INTO areas (name) VALUES
     ('Other')
 ON CONFLICT (name) DO NOTHING;
 
--- 4. TABEL STYLES (Style Number & Model Mapping)
+-- 4. TABEL MASTER DEFECT TYPES (Admin Manageable)
+CREATE TABLE IF NOT EXISTS defect_types (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) UNIQUE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed default defect types
+INSERT INTO defect_types (name) VALUES 
+    ('Component alignment (visible or expose component)'),
+    ('Component alignment right versus left'),
+    ('Cutting/trimming (rubber flash, over triming, component edge; hairy & fraying)'),
+    ('Lacing - Finished shoe lacing'),
+    ('Midsole shape - less definition, deform and midsole texture'),
+    ('Over cement on Finish shoes'),
+    ('Over cement on Bottom unit'),
+    ('Perforation, laser, or 2nd cutting consistency'),
+    ('Staining/Contamination'),
+    ('Stitching margins and SPI'),
+    ('Thread End'),
+    ('Toe spring'),
+    ('Toe stuffing (shape and placement inside the shoe)'),
+    ('Tongue shape'),
+    ('Wrapping paper'),
+    ('Wrinkling midsole'),
+    ('Wrinkling Upper'),
+    ('X-Ray'),
+    ('Sockliner Placement - missed position on finished shoes'),
+    ('Painting Quality'),
+    ('Binding or Folding Quality and consistency'),
+    ('Stockfit part Quality (Placement and fitting)'),
+    ('Airbag Contamination (PU, Painting and cement)'),
+    ('Rat hole'),
+    ('Color migration and color mismatch'),
+    ('Heel, Collar and Toe shape'),
+    ('Hot Knife- Incomplete Hot Knife cutting'),
+    ('Inner box condition (crushed, wrinkled, color variation, etc.)'),
+    ('Lace loop/pull tab attachment - Broken lace loop/pull tab'),
+    ('Midsole Color/Burning'),
+    ('Midsole - under/over side wall buffing'),
+    ('Emblishment; Quality and molded component definition'),
+    ('Outsole colors (dam spillover) - Color Bleeding'),
+    ('Over buffing'),
+    ('Rocking (>2mm)'),
+    ('Off center'),
+    ('UPC label damaged'),
+    ('Yellowing on sole unit'),
+    ('Yellowing on upper'),
+    ('Rubber outsole quality (under cure, double skin, concave)'),
+    ('Bond Gap and Delamination'),
+    ('Broken Lace'),
+    ('Twisted and Inverted stance (banana shoe)'),
+    ('Material tearing/damage'),
+    ('Metal contamination'),
+    ('Moldy'),
+    ('No-sew Quality'),
+    ('Plate/shank damage'),
+    ('Size mis-match/ Wrong size/Wrong C/O label/Missing UPC label'),
+    ('Stitching (missing or gaps) - Broken / loose stitched'),
+    ('Other Defects')
+ON CONFLICT (name) DO NOTHING;
+
+-- 5. TABEL STYLES (Style Number & Model Mapping)
 CREATE TABLE IF NOT EXISTS styles (
     id BIGSERIAL PRIMARY KEY,
     style_number VARCHAR(100) UNIQUE NOT NULL,
@@ -70,7 +132,7 @@ CREATE TABLE IF NOT EXISTS styles (
 
 CREATE INDEX IF NOT EXISTS idx_styles_style_number ON styles(style_number);
 
--- 5. TABEL INSPECTIONS (Header Data)
+-- 6. TABEL INSPECTIONS (Header Data)
 CREATE TABLE IF NOT EXISTS inspections (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     inspection_code VARCHAR(100) UNIQUE NOT NULL,
@@ -89,9 +151,7 @@ CREATE TABLE IF NOT EXISTS inspections (
 CREATE INDEX IF NOT EXISTS idx_inspections_code ON inspections(inspection_code);
 CREATE INDEX IF NOT EXISTS idx_inspections_date ON inspections(inspection_date);
 
--- 6. TABEL INSPECTION DEFECTS (Normalized / Tall Format untuk Pivot Table)
--- Jika Pair OK: defect_type = null, position = null, area = null
--- Jika Pair NG: tiap defect dicatat sebagai 1 baris
+-- 7. TABEL INSPECTION DEFECTS (Normalized / Tall Format untuk Pivot Table)
 CREATE TABLE IF NOT EXISTS inspection_defects (
     id BIGSERIAL PRIMARY KEY,
     inspection_id UUID NOT NULL REFERENCES inspections(id) ON DELETE CASCADE,
@@ -108,10 +168,11 @@ CREATE TABLE IF NOT EXISTS inspection_defects (
 CREATE INDEX IF NOT EXISTS idx_defects_inspection_id ON inspection_defects(inspection_id);
 CREATE INDEX IF NOT EXISTS idx_defects_pair_status ON inspection_defects(pair_number, status);
 
--- 7. AKTIFKAN ROW LEVEL SECURITY (RLS) DENGAN AKSES ANOMIM (NO LOGIN)
+-- 8. AKTIFKAN ROW LEVEL SECURITY (RLS) DENGAN AKSES ANOMIM (NO LOGIN)
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE lines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE areas ENABLE ROW LEVEL SECURITY;
+ALTER TABLE defect_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE styles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE inspections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE inspection_defects ENABLE ROW LEVEL SECURITY;
@@ -125,6 +186,9 @@ CREATE POLICY "Allow public read-write for lines" ON lines FOR ALL TO anon USING
 
 DROP POLICY IF EXISTS "Allow public read-write for areas" ON areas;
 CREATE POLICY "Allow public read-write for areas" ON areas FOR ALL TO anon USING (true) WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Allow public read-write for defect_types" ON defect_types;
+CREATE POLICY "Allow public read-write for defect_types" ON defect_types FOR ALL TO anon USING (true) WITH CHECK (true);
 
 DROP POLICY IF EXISTS "Allow public read-write for styles" ON styles;
 CREATE POLICY "Allow public read-write for styles" ON styles FOR ALL TO anon USING (true) WITH CHECK (true);

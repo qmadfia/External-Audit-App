@@ -1,7 +1,8 @@
 /**
  * @file script.js
  * @description Main application logic for Line Walk Through with Supabase integration,
- * claymorphism UI, interactive NG defect flow, and tall-format pivot-ready reporting.
+ * claymorphism UI, interactive bilingual support (ID/EN with flag), split-input NG defect flow,
+ * and tall-format pivot-ready reporting.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,18 +23,159 @@ document.addEventListener('DOMContentLoaded', () => {
     const MAX_WIDTH = 1024;
     const MAX_HEIGHT = 1024;
 
+    let currentLang = localStorage.getItem('lwt_language') || 'id';
     let saveTimeout = null;
     let activePairForModal = null;
     let tempDefectsListForModal = [];
     let selectedPositionForModal = 'Both';
-    let selectedAreaForModal = '';
-    let currentModalAction = { onConfirm: null, onCancel: null };
     let lastSavedFileData = null;
 
     // =========================================================================
-    // 2. DOM ELEMENTS
+    // 2. BILINGUAL TRANSLATION DICTIONARY (ID & EN)
+    // =========================================================================
+    const translations = {
+        id: {
+            app_title: "Line Walk Through",
+            admin_panel_btn: "Admin Panel",
+            status_online: "Cloud Sync Aktif",
+            status_offline: "Mode Lokal",
+            auditor_label: "Auditor",
+            auditor_ph: "Nama Auditor...",
+            category_label: "Validation Category",
+            category_ph: "Pilih Kategori...",
+            style_label: "Style Number",
+            style_ph: "Ketik untuk mencari...",
+            model_label: "Model",
+            model_ph: "Otomatis terisi",
+            line_label: "Line",
+            line_ph: "Pilih Line...",
+            inspection_heading: "Data Inspeksi Sepatu (20 Pairs)",
+            ppc_ok: "Total OK",
+            ppc_ng: "Total NG",
+            ppc_rate: "PPC Rate",
+            col_pair: "Pair #",
+            col_status: "Status",
+            col_defect: "Rincian Defect (Tipe | Posisi | Area)",
+            col_photo: "Foto Defect",
+            col_reset: "Reset",
+            btn_save_inspection: "💾 Simpan Data & Selesai Inspeksi",
+            saved_title: "File Tersimpan di Perangkat",
+            saved_limit: "(Maksimal 10 inspeksi lokal)",
+            no_saved_files: "Belum ada file inspeksi tersimpan di perangkat ini.",
+            placeholder_ng_fill: "Pilih 'NG' untuk mengisi",
+            placeholder_add_defect: "Klik untuk tambah defect...",
+            btn_photo: "+ Foto",
+            step1_title: "Tipe Defect",
+            manual_defect_label: "Input Manual (Default)",
+            manual_defect_ph: "Ketik nama defect...",
+            select_defect_label: "Pilih dari Master List",
+            select_defect_ph: "-- Pilih Rekomendasi Defect --",
+            step2_title: "Pilih Posisi",
+            pos_left: "Left (L)",
+            pos_right: "Right (R)",
+            pos_both: "Both (L & R)",
+            step3_title: "Pilih Area Sepatu",
+            manual_area_label: "Input Manual",
+            manual_area_ph: "Ketik area manual...",
+            select_area_label: "Pilih dari Master List",
+            select_area_ph: "-- Pilih Area Sepatu --",
+            btn_add_defect: "+ Tambahkan Defect Ini",
+            defect_list_title: "Daftar Defect untuk Pair Ini",
+            no_defects_yet: "Belum ada defect yang ditambahkan.",
+            btn_cancel: "Batal",
+            btn_save_pair: "✓ Simpan untuk Pair Ini",
+            btn_confirm: "Konfirmasi",
+            finish_title: "Inspeksi Selesai & Berhasil Disimpan!",
+            finish_desc: "Data telah tersimpan ke sistem. Anda dapat langsung mengunduh file laporan dalam format Excel pivot-ready (format kebawah).",
+            btn_dl_excel: "📊 Download Report Excel (Format Kebawah / Pivot-Ready)",
+            btn_dl_zip: "📦 Download Bundle ZIP (Excel + Foto Defect)",
+            btn_close_new: "Tutup & Mulai Inspeksi Baru",
+            alert_fill_auditor: "Harap isi nama Auditor.",
+            alert_select_cat: "Harap pilih Validation Category.",
+            alert_fill_style: "Harap isi Style Number.",
+            alert_select_line: "Harap pilih Line.",
+            alert_defect_required: "Pair #{pair} berstatus NG namun belum ada detail defect. Harap lengkapi terlebih dahulu.",
+            confirm_partial_inspection: "Inspeksi baru terisi {count} dari {total} pair. Apakah Anda tetap ingin menyimpan?",
+            confirm_reset_row: "Reset inspeksi untuk Pair #{pair}?",
+            confirm_delete_saved: "Hapus file rekaman lokal ini?",
+            photo_limit_alert: "Maksimal {max} foto per pair."
+        },
+        en: {
+            app_title: "Line Walk Through",
+            admin_panel_btn: "Admin Panel",
+            status_online: "Cloud Sync Active",
+            status_offline: "Local Mode",
+            auditor_label: "Auditor",
+            auditor_ph: "Auditor Name...",
+            category_label: "Validation Category",
+            category_ph: "Select Category...",
+            style_label: "Style Number",
+            style_ph: "Type to search...",
+            model_label: "Model",
+            model_ph: "Auto-filled",
+            line_label: "Line",
+            line_ph: "Select Line...",
+            inspection_heading: "Footwear Inspection Data (20 Pairs)",
+            ppc_ok: "Total OK",
+            ppc_ng: "Total NG",
+            ppc_rate: "PPC Rate",
+            col_pair: "Pair #",
+            col_status: "Status",
+            col_defect: "Defect Details (Type | Position | Area)",
+            col_photo: "Defect Photo",
+            col_reset: "Reset",
+            btn_save_inspection: "💾 Save Data & Finish Inspection",
+            saved_title: "Saved Files on Device",
+            saved_limit: "(Maximum 10 local inspections)",
+            no_saved_files: "No inspection files saved on this device yet.",
+            placeholder_ng_fill: "Select 'NG' to fill",
+            placeholder_add_defect: "Click to add defect...",
+            btn_photo: "+ Photo",
+            step1_title: "Defect Type",
+            manual_defect_label: "Manual Input (Default)",
+            manual_defect_ph: "Type defect name...",
+            select_defect_label: "Select from Master List",
+            select_defect_ph: "-- Select Preset Defect --",
+            step2_title: "Select Position",
+            pos_left: "Left (L)",
+            pos_right: "Right (R)",
+            pos_both: "Both (L & R)",
+            step3_title: "Select Shoe Area",
+            manual_area_label: "Manual Input",
+            manual_area_ph: "Type custom area...",
+            select_area_label: "Select from Master List",
+            select_area_ph: "-- Select Shoe Area --",
+            btn_add_defect: "+ Add This Defect",
+            defect_list_title: "Defect List for This Pair",
+            no_defects_yet: "No defects added yet.",
+            btn_cancel: "Cancel",
+            btn_save_pair: "✓ Save for This Pair",
+            btn_confirm: "Confirm",
+            finish_title: "Inspection Completed & Saved Successfully!",
+            finish_desc: "Data has been saved to the system. You can directly download the report in pivot-ready Excel format (tall format).",
+            btn_dl_excel: "📊 Download Excel Report (Tall / Pivot-Ready Format)",
+            btn_dl_zip: "📦 Download ZIP Bundle (Excel + Defect Photos)",
+            btn_close_new: "Close & Start New Inspection",
+            alert_fill_auditor: "Please enter Auditor name.",
+            alert_select_cat: "Please select Validation Category.",
+            alert_fill_style: "Please enter Style Number.",
+            alert_select_line: "Please select Line.",
+            alert_defect_required: "Pair #{pair} is set to NG but has no defect details. Please complete it first.",
+            confirm_partial_inspection: "Only {count} of {total} pairs have been inspected. Do you still want to save?",
+            confirm_reset_row: "Reset inspection for Pair #{pair}?",
+            confirm_delete_saved: "Delete this local inspection record?",
+            photo_limit_alert: "Maximum {max} photos per pair."
+        }
+    };
+
+    // =========================================================================
+    // 3. DOM ELEMENTS
     // =========================================================================
     const DOMElements = {
+        btnLangToggle: document.getElementById('btn-lang-toggle'),
+        langFlag: document.getElementById('lang-flag'),
+        langCode: document.getElementById('lang-code'),
+
         statusDot: document.getElementById('status-dot'),
         statusText: document.getElementById('status-text'),
         auditor: document.getElementById('auditor'),
@@ -51,17 +193,17 @@ document.addEventListener('DOMContentLoaded', () => {
         ppcTotalNg: document.getElementById('ppc-total-ng'),
         ppcRateValue: document.getElementById('ppc-rate-value'),
 
-        // NG Defect Modal
+        // NG Defect Modal (Split Inputs: Manual & Dropdown)
         ngDefectModal: document.getElementById('ng-defect-modal'),
         ngModalTitle: document.getElementById('ng-modal-title'),
         ngModalClose: document.getElementById('ng-modal-close'),
         ngModalCancel: document.getElementById('ng-modal-cancel'),
         ngModalSave: document.getElementById('ng-modal-save'),
         ngDefectInput: document.getElementById('ng-defect-input'),
-        defectSuggestions: document.getElementById('defect-suggestions'),
+        ngDefectSelect: document.getElementById('ng-defect-select'),
         ngPositionGroup: document.getElementById('ng-position-group'),
-        ngAreasContainer: document.getElementById('ng-areas-container'),
         ngCustomAreaInput: document.getElementById('ng-custom-area-input'),
+        ngAreaSelect: document.getElementById('ng-area-select'),
         btnAddDefectItem: document.getElementById('btn-add-defect-item'),
         ngCurrentDefectsList: document.getElementById('ng-current-defects-list'),
         ngDefectCount: document.getElementById('ng-defect-count'),
@@ -99,7 +241,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 3. INDEXEDDB SETUP (LOCAL BACKUP)
+    // 4. LANGUAGE SYSTEM (i18n WITH ACTIVE FLAG TOGGLE)
+    // =========================================================================
+    function setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('lwt_language', lang);
+
+        if (lang === 'id') {
+            DOMElements.langFlag.textContent = '🇮🇩';
+            DOMElements.langCode.textContent = 'ID';
+        } else {
+            DOMElements.langFlag.textContent = '🇬🇧';
+            DOMElements.langCode.textContent = 'EN';
+        }
+
+        const t = translations[lang];
+
+        // Update elements with [data-i18n]
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (t[key]) el.textContent = t[key];
+        });
+
+        // Update elements with [data-i18n-ph]
+        document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+            const key = el.dataset.i18nPh;
+            if (t[key]) el.placeholder = t[key];
+        });
+
+        // Update dynamic row placeholders in table
+        DOMElements.dataEntryBody.querySelectorAll('tr').forEach(tr => {
+            const checked = tr.querySelector('.status-radio:checked');
+            const placeholder = tr.querySelector('.placeholder-text');
+            if (placeholder) {
+                if (checked && checked.value === 'NG') {
+                    placeholder.textContent = t.placeholder_add_defect;
+                } else {
+                    placeholder.textContent = t.placeholder_ng_fill;
+                }
+            }
+        });
+
+        // Update status text
+        if (DOMElements.statusDot.classList.contains('online')) {
+            DOMElements.statusText.textContent = t.status_online;
+        } else {
+            DOMElements.statusText.textContent = t.status_offline;
+        }
+
+        // Update modal title if open
+        if (activePairForModal) {
+            const pairNum = activePairForModal.dataset.pairNumber;
+            DOMElements.ngModalTitle.textContent = `Input Defect: Pair #${pairNum}`;
+        }
+    }
+
+    DOMElements.btnLangToggle.addEventListener('click', () => {
+        const nextLang = currentLang === 'id' ? 'en' : 'id';
+        setLanguage(nextLang);
+    });
+
+    // =========================================================================
+    // 5. INDEXEDDB SETUP (LOCAL BACKUP)
     // =========================================================================
     function openDB() {
         return new Promise((resolve, reject) => {
@@ -219,7 +422,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 4. PPC RATE COMPUTATION
+    // 6. PPC RATE COMPUTATION
     // =========================================================================
     function calculatePPCRate() {
         let totalOK = 0;
@@ -247,23 +450,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 5. MASTER DATA INITIALIZATION (SUPABASE + LOCAL FALLBACK)
+    // 7. MASTER DATA INITIALIZATION (SUPABASE + LOCAL FALLBACK)
     // =========================================================================
     async function initSupabaseAndMasterData() {
         // 1. Connection check
         const test = await SupabaseService.testConnection();
+        const t = translations[currentLang];
         if (test.success) {
             DOMElements.statusDot.className = 'status-dot online';
-            DOMElements.statusText.textContent = 'Cloud Sync Aktif';
+            DOMElements.statusText.textContent = t.status_online;
         } else {
             DOMElements.statusDot.className = 'status-dot offline';
-            DOMElements.statusText.textContent = 'Mode Lokal';
+            DOMElements.statusText.textContent = t.status_offline;
         }
 
         // 2. Load Categories
         try {
             const categories = await SupabaseService.getCategories();
-            DOMElements.validationCategory.innerHTML = '<option value="">Pilih Kategori...</option>';
+            DOMElements.validationCategory.innerHTML = `<option value="">${t.category_ph}</option>`;
             categories.forEach(cat => {
                 const opt = document.createElement('option');
                 opt.value = cat.name;
@@ -277,7 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 3. Load Lines
         try {
             const lines = await SupabaseService.getLines();
-            DOMElements.line.innerHTML = '<option value="">Pilih Line...</option>';
+            DOMElements.line.innerHTML = `<option value="">${t.line_ph}</option>`;
             lines.forEach(l => {
                 const opt = document.createElement('option');
                 opt.value = l.name;
@@ -288,47 +492,45 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Error loading lines:', e);
         }
 
-        // 4. Populate Defect Suggestions in Datalist
-        if (window.defectTypes && Array.isArray(window.defectTypes)) {
-            DOMElements.defectSuggestions.innerHTML = '';
-            window.defectTypes.forEach(d => {
+        // 4. Load Defect Types into Dropdown Selector (#ng-defect-select)
+        try {
+            const defectTypes = await SupabaseService.getDefectTypes();
+            DOMElements.ngDefectSelect.innerHTML = `<option value="">${t.select_defect_ph}</option>`;
+            defectTypes.forEach(d => {
                 const opt = document.createElement('option');
-                opt.value = d;
-                DOMElements.defectSuggestions.appendChild(opt);
+                opt.value = d.name;
+                opt.textContent = d.name;
+                DOMElements.ngDefectSelect.appendChild(opt);
             });
+        } catch (e) {
+            console.warn('Error loading defect types:', e);
         }
 
-        // 5. Load Areas for NG Defect Modal
+        // 5. Load Areas into Dropdown Selector (#ng-area-select)
         try {
             const areas = await SupabaseService.getAreas();
-            DOMElements.ngAreasContainer.innerHTML = '';
-            areas.forEach((a, idx) => {
-                const chip = document.createElement('div');
-                chip.className = 'area-chip' + (idx === 0 ? ' active' : '');
-                chip.textContent = a.name;
-                chip.dataset.area = a.name;
-                chip.addEventListener('click', () => {
-                    DOMElements.ngAreasContainer.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    selectedAreaForModal = a.name;
-                    DOMElements.ngCustomAreaInput.value = '';
-                });
-                DOMElements.ngAreasContainer.appendChild(chip);
+            DOMElements.ngAreaSelect.innerHTML = `<option value="">${t.select_area_ph}</option>`;
+            areas.forEach(a => {
+                const opt = document.createElement('option');
+                opt.value = a.name;
+                opt.textContent = a.name;
+                DOMElements.ngAreaSelect.appendChild(opt);
             });
-            if (areas.length > 0) {
-                selectedAreaForModal = areas[0].name;
-            }
         } catch (e) {
             console.warn('Error loading areas:', e);
         }
+
+        // Apply translations
+        setLanguage(currentLang);
     }
 
     // =========================================================================
-    // 6. GENERATE ROWS & TABLE INTERACTIONS
+    // 8. GENERATE ROWS & TABLE INTERACTIONS
     // =========================================================================
     function generateDataEntryRows() {
         const tbody = DOMElements.dataEntryBody;
         tbody.innerHTML = '';
+        const t = translations[currentLang];
 
         for (let i = 1; i <= TOTAL_PAIRS; i++) {
             const tr = document.createElement('tr');
@@ -353,14 +555,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>
                     <div class="defect-input-container disabled">
                         <div class="defect-tags-wrapper">
-                            <span class="placeholder-text">Pilih 'NG' untuk mengisi</span>
+                            <span class="placeholder-text">${t.placeholder_ng_fill}</span>
                         </div>
                     </div>
                 </td>
                 <td>
                     <div class="photo-container">
                         <div class="photo-gallery"></div>
-                        <button class="add-photo-btn" style="display:none;">+ Foto</button>
+                        <button class="add-photo-btn" style="display:none;">${t.btn_photo}</button>
                         <input type="file" accept="image/*" class="hidden-file-input" multiple style="display:none;">
                     </div>
                 </td>
@@ -375,6 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateDefectTags(tr) {
         const wrapper = tr.querySelector('.defect-tags-wrapper');
         const defects = JSON.parse(tr.dataset.defects || '[]');
+        const t = translations[currentLang];
         wrapper.innerHTML = '';
 
         if (defects.length > 0) {
@@ -393,7 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
             placeholder.className = 'placeholder-text';
             const checkedRadio = tr.querySelector('.status-radio:checked');
             const status = checkedRadio ? checkedRadio.value : '';
-            placeholder.textContent = status === 'NG' ? 'Klik untuk tambah defect...' : "Pilih 'NG' untuk mengisi";
+            placeholder.textContent = status === 'NG' ? t.placeholder_add_defect : t.placeholder_ng_fill;
             wrapper.appendChild(placeholder);
         }
     }
@@ -427,9 +630,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 7. NEW NG DEFECT FLOW MODAL LOGIC
+    // 9. NG DEFECT MODAL LOGIC (SPLIT 2-COLUMN: MANUAL & DROPDOWN)
     // =========================================================================
-    // FLOW: NG -> Isi defect type manual -> pilih posisi L/R -> pilih area
     function openNgDefectModal(tr) {
         activePairForModal = tr;
         const pairNum = tr.dataset.pairNumber;
@@ -441,21 +643,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset step inputs
         DOMElements.ngDefectInput.value = '';
+        DOMElements.ngDefectSelect.value = '';
         DOMElements.ngCustomAreaInput.value = '';
+        DOMElements.ngAreaSelect.value = '';
 
         // Position: default to Both
         selectedPositionForModal = 'Both';
         DOMElements.ngPositionGroup.querySelectorAll('.toggle-option').forEach(opt => {
             opt.classList.toggle('active', opt.dataset.pos === 'Both');
         });
-
-        // Area: pick first active
-        const firstAreaChip = DOMElements.ngAreasContainer.querySelector('.area-chip');
-        if (firstAreaChip) {
-            DOMElements.ngAreasContainer.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-            firstAreaChip.classList.add('active');
-            selectedAreaForModal = firstAreaChip.dataset.area;
-        }
 
         DOMElements.ngDefectModal.style.display = 'flex';
         setTimeout(() => DOMElements.ngDefectInput.focus(), 150);
@@ -468,8 +664,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function renderTempDefectsList() {
         DOMElements.ngDefectCount.textContent = tempDefectsListForModal.length;
+        const t = translations[currentLang];
         if (tempDefectsListForModal.length === 0) {
-            DOMElements.ngCurrentDefectsList.innerHTML = `<span class="placeholder-text" style="text-align: center; margin: auto;">Belum ada defect yang ditambahkan.</span>`;
+            DOMElements.ngCurrentDefectsList.innerHTML = `<span class="placeholder-text" style="text-align: center; margin: auto;">${t.no_defects_yet}</span>`;
             return;
         }
 
@@ -486,6 +683,22 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     }
 
+    // Sync: Selecting from Defect Dropdown fills Manual Input on the left
+    DOMElements.ngDefectSelect.addEventListener('change', (e) => {
+        if (e.target.value) {
+            DOMElements.ngDefectInput.value = e.target.value;
+            DOMElements.ngDefectInput.focus();
+        }
+    });
+
+    // Sync: Selecting from Area Dropdown fills Manual Area Input on the left
+    DOMElements.ngAreaSelect.addEventListener('change', (e) => {
+        if (e.target.value) {
+            DOMElements.ngCustomAreaInput.value = e.target.value;
+            DOMElements.ngCustomAreaInput.focus();
+        }
+    });
+
     // Toggle position selection (L / R / Both)
     DOMElements.ngPositionGroup.addEventListener('click', (e) => {
         const option = e.target.closest('.toggle-option');
@@ -495,26 +708,17 @@ document.addEventListener('DOMContentLoaded', () => {
         selectedPositionForModal = option.dataset.pos;
     });
 
-    // Custom area input overrides chip
-    DOMElements.ngCustomAreaInput.addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        if (val) {
-            DOMElements.ngAreasContainer.querySelectorAll('.area-chip').forEach(c => c.classList.remove('active'));
-            selectedAreaForModal = val;
-        }
-    });
-
     // Add defect to list button
     DOMElements.btnAddDefectItem.addEventListener('click', () => {
-        const defectName = DOMElements.ngDefectInput.value.trim();
+        const t = translations[currentLang];
+        const defectName = DOMElements.ngDefectInput.value.trim() || DOMElements.ngDefectSelect.value.trim();
         if (!defectName) {
-            alert('Harap isi nama/tipe defect terlebih dahulu.');
+            alert(currentLang === 'id' ? 'Harap isi atau pilih tipe defect terlebih dahulu.' : 'Please enter or select a defect type.');
             DOMElements.ngDefectInput.focus();
             return;
         }
 
-        const customArea = DOMElements.ngCustomAreaInput.value.trim();
-        const areaToUse = customArea || selectedAreaForModal || 'General';
+        const areaToUse = DOMElements.ngCustomAreaInput.value.trim() || DOMElements.ngAreaSelect.value.trim() || 'General';
 
         tempDefectsListForModal.push({
             defectType: defectName,
@@ -524,9 +728,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderTempDefectsList();
 
-        // Reset input for next entry
+        // Reset inputs for next defect
         DOMElements.ngDefectInput.value = '';
+        DOMElements.ngDefectSelect.value = '';
         DOMElements.ngCustomAreaInput.value = '';
+        DOMElements.ngAreaSelect.value = '';
         DOMElements.ngDefectInput.focus();
     });
 
@@ -543,20 +749,19 @@ document.addEventListener('DOMContentLoaded', () => {
     DOMElements.ngModalSave.addEventListener('click', () => {
         if (!activePairForModal) return;
 
-        // If user typed in the box but didn't click add button, automatically add it
-        const remainingInput = DOMElements.ngDefectInput.value.trim();
-        if (remainingInput) {
-            const customArea = DOMElements.ngCustomAreaInput.value.trim();
-            const areaToUse = customArea || selectedAreaForModal || 'General';
+        // If user typed in the box but forgot to click "+ Tambah Defect", automatically add it
+        const remainingDefect = DOMElements.ngDefectInput.value.trim() || DOMElements.ngDefectSelect.value.trim();
+        if (remainingDefect) {
+            const areaToUse = DOMElements.ngCustomAreaInput.value.trim() || DOMElements.ngAreaSelect.value.trim() || 'General';
             tempDefectsListForModal.push({
-                defectType: remainingInput,
+                defectType: remainingDefect,
                 position: selectedPositionForModal,
                 area: areaToUse
             });
         }
 
         if (tempDefectsListForModal.length === 0) {
-            alert('Harap masukkan minimal 1 defect untuk status NG.');
+            alert(currentLang === 'id' ? 'Harap masukkan minimal 1 defect untuk status NG.' : 'Please add at least 1 defect for NG status.');
             return;
         }
 
@@ -585,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 8. TABLE EVENT HANDLERS
+    // 10. TABLE EVENT HANDLERS
     // =========================================================================
     DOMElements.dataEntryBody.addEventListener('change', (e) => {
         const target = e.target;
@@ -633,7 +838,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const idx = parseInt(target.dataset.index);
             removePhoto(tr, idx);
         } else if (target.classList.contains('delete-row-btn')) {
-            if (confirm(`Reset inspeksi untuk Pair #${tr.dataset.pairNumber}?`)) {
+            const t = translations[currentLang];
+            const confirmMsg = t.confirm_reset_row.replace('{pair}', tr.dataset.pairNumber);
+            if (confirm(confirmMsg)) {
                 resetRow(tr);
                 calculatePPCRate();
                 saveDraftToLocalStorage(true);
@@ -651,7 +858,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let currentPhotos = JSON.parse(tr.dataset.photos || '[]');
         if (currentPhotos.length >= MAX_PHOTOS_PER_PAIR) {
-            alert(`Maksimal ${MAX_PHOTOS_PER_PAIR} foto per pair.`);
+            const t = translations[currentLang];
+            alert(t.photo_limit_alert.replace('{max}', MAX_PHOTOS_PER_PAIR));
             e.target.value = '';
             return;
         }
@@ -690,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 9. STYLE AUTOCOMPLETE (SUPABASE + LOCAL)
+    // 11. STYLE AUTOCOMPLETE (SUPABASE + LOCAL)
     // =========================================================================
     let autocompleteTimer = null;
     DOMElements.styleNumberInput.addEventListener('input', (e) => {
@@ -733,7 +941,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 10. AUTO-SAVE & DRAFT RESTORATION
+    // 12. AUTO-SAVE & DRAFT RESTORATION
     // =========================================================================
     function saveDraftToLocalStorage(immediate = false) {
         const doSave = async () => {
@@ -837,22 +1045,23 @@ document.addEventListener('DOMContentLoaded', () => {
     DOMElements.line.addEventListener('change', () => saveDraftToLocalStorage(true));
 
     // =========================================================================
-    // 11. SAVE INSPECTION & REPORTING
+    // 13. SAVE INSPECTION & REPORTING
     // =========================================================================
     DOMElements.saveButton.addEventListener('click', handleSaveInspection);
 
     async function handleSaveInspection() {
+        const t = translations[currentLang];
         if (!DOMElements.auditor.value.trim()) {
-            return alert('Harap isi nama Auditor.');
+            return alert(t.alert_fill_auditor);
         }
         if (!DOMElements.validationCategory.value) {
-            return alert('Harap pilih Validation Category.');
+            return alert(t.alert_select_cat);
         }
         if (!DOMElements.styleNumberInput.value.trim()) {
-            return alert('Harap isi Style Number.');
+            return alert(t.alert_fill_style);
         }
         if (!DOMElements.line.value) {
-            return alert('Harap pilih Line.');
+            return alert(t.alert_select_line);
         }
 
         // Validate that every NG pair has at least 1 defect item
@@ -862,14 +1071,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (checked && checked.value === 'NG') {
                 const defects = JSON.parse(tr.dataset.defects || '[]');
                 if (defects.length === 0) {
-                    return alert(`Pair #${tr.dataset.pairNumber} berstatus NG namun belum ada detail defect. Harap lengkapi terlebih dahulu.`);
+                    return alert(t.alert_defect_required.replace('{pair}', tr.dataset.pairNumber));
                 }
             }
         }
 
         const inspectedCount = Array.from(document.querySelectorAll('.status-radio:checked')).length;
         if (inspectedCount < TOTAL_PAIRS) {
-            if (!confirm(`Inspeksi baru terisi ${inspectedCount} dari ${TOTAL_PAIRS} pair. Apakah Anda tetap ingin menyimpan?`)) {
+            const confirmMsg = t.confirm_partial_inspection.replace('{count}', inspectedCount).replace('{total}', TOTAL_PAIRS);
+            if (!confirm(confirmMsg)) {
                 return;
             }
         }
@@ -878,7 +1088,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function executeSave() {
-        showLoading('Menyimpan inspeksi ke Supabase & Local...');
+        showLoading(currentLang === 'id' ? 'Menyimpan inspeksi ke Supabase & Local...' : 'Saving inspection to Supabase & Local...');
 
         try {
             const now = new Date();
@@ -996,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 12. EXPORT REPORTING (TALL / FORMAT KEBAWAH UNTUK PIVOT TABLE)
+    // 14. EXPORT REPORTING (TALL / FORMAT KEBAWAH UNTUK PIVOT TABLE)
     // =========================================================================
     function generateTallFormatExcel(fileRecord) {
         const { header, defectRows } = fileRecord;
@@ -1071,7 +1281,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Download ZIP (Excel + Photos)
     async function downloadZipBundle(fileRecord) {
-        showLoading('Membuat bundle ZIP...');
+        showLoading(currentLang === 'id' ? 'Membuat bundle ZIP...' : 'Generating ZIP bundle...');
         try {
             const zip = new JSZip();
             const wb = generateTallFormatExcel(fileRecord);
@@ -1115,14 +1325,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 13. SAVED FILES LIST RENDERING
+    // 15. SAVED FILES LIST RENDERING
     // =========================================================================
     async function renderSavedFilesList() {
         const list = DOMElements.savedFilesList;
         const data = await getFromDB();
+        const t = translations[currentLang];
 
         if (data.length === 0) {
-            list.innerHTML = '<li style="color:var(--text-muted); padding:12px;">Belum ada file inspeksi tersimpan di perangkat ini.</li>';
+            list.innerHTML = `<li style="color:var(--text-muted); padding:12px;">${t.no_saved_files}</li>`;
             return;
         }
 
@@ -1161,7 +1372,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rec) downloadZipBundle(rec);
         } else if (deleteBtn) {
             const id = deleteBtn.dataset.id;
-            if (confirm('Hapus file rekaman lokal ini?')) {
+            const t = translations[currentLang];
+            if (confirm(t.confirm_delete_saved)) {
                 await deleteFromDB(id);
                 renderSavedFilesList();
             }
@@ -1169,10 +1381,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 14. APPLICATION INITIALIZATION
+    // 16. APPLICATION INITIALIZATION
     // =========================================================================
     async function init() {
-        console.log('🚀 Launching Line Walk Through with Claymorphism & Supabase...');
+        console.log('🚀 Launching Line Walk Through with Bilingual & Split Defect/Area Inputs...');
         generateDataEntryRows();
         await initSupabaseAndMasterData();
         await restoreDraft();

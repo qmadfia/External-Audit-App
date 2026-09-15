@@ -50,6 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
         inputAreaName: document.getElementById('input-area-name'),
         areasContainer: document.getElementById('areas-container'),
 
+        formAddDefectType: document.getElementById('form-add-defect-type'),
+        inputDefectTypeName: document.getElementById('input-defect-type-name'),
+        defectTypesContainer: document.getElementById('defect-types-container'),
+
         // Audit Tab
         auditSearchInput: document.getElementById('audit-search-input'),
         auditTableBody: document.getElementById('audit-table-body'),
@@ -259,6 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCategories();
         loadLines();
         loadAreas();
+        loadDefectTypes();
     }
 
     async function loadCategories() {
@@ -394,6 +399,54 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 await SupabaseService.deleteArea(btn.dataset.id);
                 loadAreas();
+            } catch (err) {
+                alert('Gagal: ' + err.message);
+            } finally {
+                hideLoading();
+            }
+        }
+    });
+
+    async function loadDefectTypes() {
+        elements.defectTypesContainer.innerHTML = 'Memuat tipe defect...';
+        try {
+            const defects = await SupabaseService.getDefectTypes();
+            elements.defectTypesContainer.innerHTML = defects.map(d => `
+                <span class="clay-badge" style="display:inline-flex; align-items:center; gap:6px; background:white; padding:6px 12px; border-radius:20px; font-weight:700; color:var(--danger); box-shadow:var(--clay-badge-shadow); font-size:0.85rem;">
+                    ${d.name}
+                    <button class="delete-defect-btn" data-id="${d.id}" data-name="${d.name}" style="background:none; border:none; color:var(--danger); cursor:pointer; font-weight:800; font-size:13px;">×</button>
+                </span>
+            `).join('');
+        } catch (err) {
+            elements.defectTypesContainer.innerHTML = `<span style="color:var(--danger)">Error: ${err.message}</span>`;
+        }
+    }
+
+    elements.formAddDefectType.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = elements.inputDefectTypeName.value.trim();
+        if (!name) return;
+        showLoading('Menambah tipe defect...');
+        try {
+            await SupabaseService.addDefectType(name);
+            elements.inputDefectTypeName.value = '';
+            loadDefectTypes();
+        } catch (err) {
+            alert('Gagal: ' + err.message);
+        } finally {
+            hideLoading();
+        }
+    });
+
+    elements.defectTypesContainer.addEventListener('click', async (e) => {
+        const btn = e.target.closest('.delete-defect-btn');
+        if (!btn) return;
+        const name = btn.dataset.name;
+        if (confirm(`Hapus tipe defect "${name}"?`)) {
+            showLoading();
+            try {
+                await SupabaseService.deleteDefectType(btn.dataset.id, name);
+                loadDefectTypes();
             } catch (err) {
                 alert('Gagal: ' + err.message);
             } finally {

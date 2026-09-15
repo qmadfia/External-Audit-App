@@ -773,6 +773,66 @@ tbody td:last-child {
     letter-spacing: 0.5px;
 }
 
+/* Split Input Grid (2 Columns: Manual & Dropdown) */
+.split-input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.sub-label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+/* Language Toggle Button with Active Flag */
+.lang-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--clay-btn-shadow);
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition-smooth);
+    user-select: none;
+}
+
+.lang-toggle-btn:hover {
+    background: #f8fafc;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+.lang-toggle-btn:active {
+    box-shadow: var(--clay-btn-active-shadow);
+    transform: scale(0.97);
+}
+
+.lang-flag {
+    font-size: 1.15rem;
+    line-height: 1;
+}
+
+.lang-code {
+    font-weight: 800;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+@media (max-width: 600px) {
+    .split-input-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Clay Position Toggle Group */
 .clay-toggle-group {
     display: grid;

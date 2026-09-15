@@ -16,14 +16,24 @@
         <header class="app-header">
             <div class="header-brand">
                 <span class="brand-badge">IA</span>
-                <span class="brand-title">Line Walk Through</span>
+                <span class="brand-title" data-i18n="app_title">Line Walk Through</span>
             </div>
             <div class="header-nav">
+                <!-- Language Toggle with Active Flag -->
+                <button id="btn-lang-toggle" class="lang-toggle-btn" title="Ganti Bahasa / Switch Language">
+                    <span id="lang-flag" class="lang-flag">🇮🇩</span>
+                    <span id="lang-code" class="lang-code">ID</span>
+                </button>
+
+                <!-- Supabase Cloud Sync Status -->
                 <div class="cloud-status" id="cloud-status-badge">
                     <span class="status-dot offline" id="status-dot"></span>
                     <span id="status-text">Memeriksa Supabase...</span>
                 </div>
-                <a href="admin.html" class="btn btn-secondary btn-sm" id="btn-admin-link">⚙️ Admin Panel</a>
+
+                <a href="admin.html" class="btn btn-secondary btn-sm" id="btn-admin-link">
+                    <span>⚙️</span> <span data-i18n="admin_panel_btn">Admin Panel</span>
+                </a>
             </div>
         </header>
 
@@ -32,28 +42,28 @@
             <section class="card form-section">
                 <div class="form-grid">
                     <div class="form-group">
-                        <label for="auditor">Auditor</label>
-                        <input type="text" id="auditor" class="clay-input" placeholder="Nama Auditor...">
+                        <label for="auditor" data-i18n="auditor_label">Auditor</label>
+                        <input type="text" id="auditor" class="clay-input" placeholder="Nama Auditor..." data-i18n-ph="auditor_ph">
                     </div>
                     <div class="form-group">
-                        <label for="validation-category">Validation Category</label>
+                        <label for="validation-category" data-i18n="category_label">Validation Category</label>
                         <select id="validation-category" class="clay-select">
-                            <option value="">Pilih Kategori...</option>
+                            <option value="" data-i18n="category_ph">Pilih Kategori...</option>
                         </select>
                     </div>
                     <div class="form-group autocomplete-container">
-                        <label for="style-number">Style Number</label>
-                        <input type="text" id="style-number" class="clay-input" placeholder="Ketik untuk mencari...">
+                        <label for="style-number" data-i18n="style_label">Style Number</label>
+                        <input type="text" id="style-number" class="clay-input" placeholder="Ketik untuk mencari..." data-i18n-ph="style_ph">
                         <div id="autocomplete-results" class="autocomplete-results"></div>
                     </div>
                     <div class="form-group">
-                        <label for="model">Model</label>
-                        <input type="text" id="model" class="clay-input" placeholder="Otomatis terisi" readonly>
+                        <label for="model" data-i18n="model_label">Model</label>
+                        <input type="text" id="model" class="clay-input" placeholder="Otomatis terisi" data-i18n-ph="model_ph" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="line">Line</label>
+                        <label for="line" data-i18n="line_label">Line</label>
                         <select id="line" class="clay-select">
-                            <option value="">Pilih Line...</option>
+                            <option value="" data-i18n="line_ph">Pilih Line...</option>
                         </select>
                     </div>
                 </div>
@@ -62,18 +72,18 @@
             <!-- Inspection Table & Scorecard -->
             <section class="card data-entry-section">
                 <div class="inspection-header">
-                    <h2 style="font-size: 1.3rem; font-weight: 800;">Data Inspeksi Sepatu (20 Pairs)</h2>
+                    <h2 style="font-size: 1.3rem; font-weight: 800;" data-i18n="inspection_heading">Data Inspeksi Sepatu (20 Pairs)</h2>
                     <div class="ppc-summary">
                         <div class="ppc-item ppc-ok">
-                            <span class="ppc-label">Total OK</span>
+                            <span class="ppc-label" data-i18n="ppc_ok">Total OK</span>
                             <span class="ppc-value" id="ppc-total-ok">0</span>
                         </div>
                         <div class="ppc-item ppc-ng">
-                            <span class="ppc-label">Total NG</span>
+                            <span class="ppc-label" data-i18n="ppc_ng">Total NG</span>
                             <span class="ppc-value" id="ppc-total-ng">0</span>
                         </div>
                         <div class="ppc-item ppc-rate">
-                            <span class="ppc-label">PPC Rate</span>
+                            <span class="ppc-label" data-i18n="ppc_rate">PPC Rate</span>
                             <span class="ppc-value" id="ppc-rate-value">—</span>
                         </div>
                     </div>
@@ -83,11 +93,11 @@
                     <table>
                         <thead>
                             <tr>
-                                <th style="width: 70px; text-align: center;">Pair #</th>
-                                <th style="width: 140px;">Status</th>
-                                <th>Rincian Defect (Tipe | Posisi | Area)</th>
-                                <th style="width: 200px;">Foto Defect</th>
-                                <th style="width: 70px; text-align: center;">Reset</th>
+                                <th style="width: 70px; text-align: center;" data-i18n="col_pair">Pair #</th>
+                                <th style="width: 140px;" data-i18n="col_status">Status</th>
+                                <th data-i18n="col_defect">Rincian Defect (Tipe | Posisi | Area)</th>
+                                <th style="width: 200px;" data-i18n="col_photo">Foto Defect</th>
+                                <th style="width: 70px; text-align: center;" data-i18n="col_reset">Reset</th>
                             </tr>
                         </thead>
                         <tbody id="data-entry-body">
@@ -99,72 +109,90 @@
 
             <!-- Save & Action Buttons -->
             <div class="actions-bar">
-                <button id="save-button" class="btn btn-primary btn-lg">💾 Simpan Data & Selesai Inspeksi</button>
+                <button id="save-button" class="btn btn-primary btn-lg" data-i18n="btn_save_inspection">💾 Simpan Data & Selesai Inspeksi</button>
             </div>
 
             <!-- Saved Files Section -->
             <section class="card saved-files-section">
                 <div class="card-title">
-                    <span>File Tersimpan di Perangkat</span>
-                    <small style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;">(Maksimal 10 inspeksi lokal)</small>
+                    <span data-i18n="saved_title">File Tersimpan di Perangkat</span>
+                    <small style="font-size: 0.8rem; color: var(--text-muted); font-weight: normal;" data-i18n="saved_limit">(Maksimal 10 inspeksi lokal)</small>
                 </div>
                 <ul id="saved-files-list" class="saved-files-list"></ul>
             </section>
         </main>
     </div>
 
-    <!-- NG DEFECT INPUT MODAL (FLOW: NG -> DEFECT TYPE MANUAL -> POSISI L/R -> AREA) -->
+    <!-- NG DEFECT INPUT MODAL (FLOW: NG -> DEFECT TYPE MANUAL & DROPDOWN -> POSISI L/R -> AREA MANUAL & DROPDOWN) -->
     <div id="ng-defect-modal" class="modal-overlay" style="display: none;">
-        <div class="modal-content" style="max-width: 620px;">
+        <div class="modal-content" style="max-width: 680px;">
             <div class="modal-header">
-                <h4 class="modal-title" id="ng-modal-title">Input Defect Pair #1</h4>
+                <h4 class="modal-title" id="ng-modal-title">Input Defect: Pair #1</h4>
                 <button type="button" class="btn btn-sm btn-secondary" id="ng-modal-close" style="border-radius: 50%; width: 32px; height: 32px; padding: 0;">✕</button>
             </div>
 
             <div class="modal-body">
-                <!-- Step 1: Input Tipe Defect Manual -->
+                <!-- Step 1: Input Tipe Defect (Dibagi 2: Manual di kiri & Dropdown di kanan) -->
                 <div class="ng-flow-section">
-                    <label class="ng-flow-label">1. Tipe Defect (Ketik Manual / Pilih Rekomendasi)</label>
-                    <input type="text" id="ng-defect-input" class="clay-input" list="defect-suggestions" placeholder="Ketik nama defect (contoh: Over cement, Broken stitch, dll)...">
-                    <datalist id="defect-suggestions"></datalist>
+                    <label class="ng-flow-label">1. <span data-i18n="step1_title">Tipe Defect</span></label>
+                    <div class="split-input-grid">
+                        <div>
+                            <label class="sub-label" data-i18n="manual_defect_label">Input Manual (Default)</label>
+                            <input type="text" id="ng-defect-input" class="clay-input" placeholder="Ketik nama defect..." data-i18n-ph="manual_defect_ph">
+                        </div>
+                        <div>
+                            <label class="sub-label" data-i18n="select_defect_label">Pilih dari Master List</label>
+                            <select id="ng-defect-select" class="clay-select">
+                                <option value="" data-i18n="select_defect_ph">-- Pilih Rekomendasi Defect --</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Step 2: Pilih Posisi (L / R / Both) -->
                 <div class="ng-flow-section">
-                    <label class="ng-flow-label">2. Pilih Posisi</label>
+                    <label class="ng-flow-label">2. <span data-i18n="step2_title">Pilih Posisi</span></label>
                     <div class="clay-toggle-group" id="ng-position-group">
-                        <div class="toggle-option" data-pos="L">Left (L)</div>
-                        <div class="toggle-option" data-pos="R">Right (R)</div>
-                        <div class="toggle-option active" data-pos="Both">Both (L & R)</div>
+                        <div class="toggle-option" data-pos="L" data-i18n="pos_left">Left (L)</div>
+                        <div class="toggle-option" data-pos="R" data-i18n="pos_right">Right (R)</div>
+                        <div class="toggle-option active" data-pos="Both" data-i18n="pos_both">Both (L & R)</div>
                     </div>
                 </div>
 
-                <!-- Step 3: Pilih Area Sepatu -->
+                <!-- Step 3: Pilih Area Sepatu (Dibagi 2: Manual di kiri & Dropdown di kanan) -->
                 <div class="ng-flow-section">
-                    <label class="ng-flow-label">3. Pilih Area Sepatu</label>
-                    <div class="area-chips-container" id="ng-areas-container">
-                        <!-- Populated dynamically -->
+                    <label class="ng-flow-label">3. <span data-i18n="step3_title">Pilih Area Sepatu</span></label>
+                    <div class="split-input-grid">
+                        <div>
+                            <label class="sub-label" data-i18n="manual_area_label">Input Manual</label>
+                            <input type="text" id="ng-custom-area-input" class="clay-input" placeholder="Ketik area manual..." data-i18n-ph="manual_area_ph">
+                        </div>
+                        <div>
+                            <label class="sub-label" data-i18n="select_area_label">Pilih dari Master List</label>
+                            <select id="ng-area-select" class="clay-select">
+                                <option value="" data-i18n="select_area_ph">-- Pilih Area Sepatu --</option>
+                            </select>
+                        </div>
                     </div>
-                    <input type="text" id="ng-custom-area-input" class="clay-input" placeholder="Atau ketik nama area custom..." style="margin-top: 8px; font-size: 0.85rem; padding: 8px 12px;">
                 </div>
 
                 <!-- Tombol Tambahkan ke List -->
-                <button type="button" id="btn-add-defect-item" class="btn btn-primary btn-sm" style="width: 100%; margin-bottom: 16px;">
+                <button type="button" id="btn-add-defect-item" class="btn btn-primary btn-sm" style="width: 100%; margin-bottom: 16px;" data-i18n="btn_add_defect">
                     + Tambahkan Defect Ini
                 </button>
 
                 <!-- List Defect Terdaftar untuk Pair Ini -->
                 <div class="ng-flow-section">
-                    <label class="ng-flow-label">Daftar Defect untuk Pair Ini (<span id="ng-defect-count">0</span>):</label>
+                    <label class="ng-flow-label"><span data-i18n="defect_list_title">Daftar Defect untuk Pair Ini</span> (<span id="ng-defect-count">0</span>):</label>
                     <div id="ng-current-defects-list" class="current-defects-list">
-                        <span class="placeholder-text" style="text-align: center; margin: auto;">Belum ada defect yang ditambahkan.</span>
+                        <span class="placeholder-text" style="text-align: center; margin: auto;" data-i18n="no_defects_yet">Belum ada defect yang ditambahkan.</span>
                     </div>
                 </div>
             </div>
 
             <div class="modal-actions">
-                <button type="button" id="ng-modal-cancel" class="btn btn-secondary">Batal</button>
-                <button type="button" id="ng-modal-save" class="btn btn-success">✓ Simpan untuk Pair Ini</button>
+                <button type="button" id="ng-modal-cancel" class="btn btn-secondary" data-i18n="btn_cancel">Batal</button>
+                <button type="button" id="ng-modal-save" class="btn btn-success" data-i18n="btn_save_pair">✓ Simpan untuk Pair Ini</button>
             </div>
         </div>
     </div>
@@ -173,34 +201,34 @@
     <div id="finish-report-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content" style="max-width: 580px; text-align: center;">
             <div style="font-size: 3rem; margin-bottom: 10px;">🎉</div>
-            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;">Inspeksi Selesai & Berhasil Disimpan!</h3>
-            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;" id="finish-report-desc">
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px;" data-i18n="finish_title">Inspeksi Selesai & Berhasil Disimpan!</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;" id="finish-report-desc" data-i18n="finish_desc">
                 Data telah tersimpan ke sistem. Anda dapat langsung mengunduh file laporan dalam format Excel pivot-ready (format kebawah).
             </p>
 
             <div style="background: #f8fafc; border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px; display: flex; justify-content: space-around;">
                 <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">TOTAL OK</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;" data-i18n="ppc_ok">TOTAL OK</div>
                     <div style="font-size: 1.6rem; font-weight: 800; color: var(--success);" id="finish-total-ok">0</div>
                 </div>
                 <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">TOTAL NG</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;" data-i18n="ppc_ng">TOTAL NG</div>
                     <div style="font-size: 1.6rem; font-weight: 800; color: var(--danger);" id="finish-total-ng">0</div>
                 </div>
                 <div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;">PPC RATE</div>
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700;" data-i18n="ppc_rate">PPC RATE</div>
                     <div style="font-size: 1.6rem; font-weight: 800; color: var(--primary);" id="finish-ppc-rate">0%</div>
                 </div>
             </div>
 
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button id="btn-finish-download-excel" class="btn btn-success btn-lg">
+                <button id="btn-finish-download-excel" class="btn btn-success btn-lg" data-i18n="btn_dl_excel">
                     📊 Download Report Excel (Format Kebawah / Pivot-Ready)
                 </button>
-                <button id="btn-finish-download-zip" class="btn btn-primary">
+                <button id="btn-finish-download-zip" class="btn btn-primary" data-i18n="btn_dl_zip">
                     📦 Download Bundle ZIP (Excel + Foto Defect)
                 </button>
-                <button id="btn-finish-close" class="btn btn-secondary">
+                <button id="btn-finish-close" class="btn btn-secondary" data-i18n="btn_close_new">
                     Tutup & Mulai Inspeksi Baru
                 </button>
             </div>
@@ -213,8 +241,8 @@
             <h4 id="modal-title" class="modal-title">Judul</h4>
             <div id="modal-body" style="margin: 16px 0;"></div>
             <div class="modal-actions">
-                <button id="modal-confirm-btn" class="btn btn-primary">Konfirmasi</button>
-                <button id="modal-cancel-btn" class="btn btn-secondary">Batal</button>
+                <button id="modal-confirm-btn" class="btn btn-primary" data-i18n="btn_confirm">Konfirmasi</button>
+                <button id="modal-cancel-btn" class="btn btn-secondary" data-i18n="btn_cancel">Batal</button>
             </div>
         </div>
     </div>
