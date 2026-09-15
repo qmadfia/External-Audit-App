@@ -1,0 +1,952 @@
+/* ==========================================================================
+   CLAYMORPHISM & GESTALT DESIGN SYSTEM
+   Line Walk Through & Admin Management App
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+    /* Color Palette: Warm Clay & Soft Tones */
+    --bg-main: #f0f3f8;
+    --card-bg: #ffffff;
+    --text-primary: #2d3748;
+    --text-muted: #718096;
+    --text-light: #a0aec0;
+    
+    /* Clay Accent Colors */
+    --primary: #4f46e5;
+    --primary-light: #818cf8;
+    --primary-bg: #eef2ff;
+    
+    --success: #10b981;
+    --success-light: #6ee7b7;
+    --success-bg: #ecfdf5;
+    
+    --danger: #ef4444;
+    --danger-light: #fca5a5;
+    --danger-bg: #fef2f2;
+    
+    --warning: #f59e0b;
+    --warning-bg: #fffbeb;
+    
+    /* Clay 3D Shadows */
+    --clay-card-shadow: 
+        8px 8px 18px rgba(166, 175, 195, 0.45),
+        -8px -8px 18px rgba(255, 255, 255, 0.95),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.8),
+        inset -1px -1px 2px rgba(166, 175, 195, 0.2);
+
+    --clay-btn-shadow:
+        4px 4px 10px rgba(166, 175, 195, 0.4),
+        -4px -4px 10px rgba(255, 255, 255, 0.9),
+        inset 2px 2px 3px rgba(255, 255, 255, 0.7),
+        inset -2px -2px 3px rgba(0, 0, 0, 0.1);
+
+    --clay-btn-active-shadow:
+        inset 3px 3px 6px rgba(0, 0, 0, 0.15),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.8),
+        1px 1px 3px rgba(166, 175, 195, 0.2);
+
+    --clay-input-shadow:
+        inset 3px 3px 6px rgba(166, 175, 195, 0.35),
+        inset -3px -3px 6px rgba(255, 255, 255, 0.9),
+        1px 1px 2px rgba(255, 255, 255, 0.8);
+
+    --clay-badge-shadow:
+        3px 3px 6px rgba(166, 175, 195, 0.3),
+        -3px -3px 6px rgba(255, 255, 255, 0.85);
+
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 22px;
+    --radius-xl: 30px;
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    line-height: 1.5;
+    padding: 24px 16px;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* ==========================================================================
+   HEADER & NAVBAR
+   ========================================================================== */
+header.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--card-bg);
+    padding: 16px 28px;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--clay-card-shadow);
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-badge {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 8px 16px;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.35);
+    letter-spacing: 0.5px;
+}
+
+.brand-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.cloud-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: var(--radius-xl);
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: var(--clay-badge-shadow);
+    background: white;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.online {
+    background: var(--success);
+    box-shadow: 0 0 8px var(--success);
+}
+
+.status-dot.offline {
+    background: var(--warning);
+    box-shadow: 0 0 8px var(--warning);
+}
+
+/* ==========================================================================
+   CLAY CARDS
+   ========================================================================== */
+.card, .clay-card {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: 26px;
+    margin-bottom: 24px;
+    box-shadow: var(--clay-card-shadow);
+    transition: var(--transition-smooth);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ==========================================================================
+   FORM CONTROLS (CLAY STYLE)
+   ========================================================================== */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    letter-spacing: 0.3px;
+}
+
+.clay-input, 
+.clay-select,
+.form-group input, 
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: #f8fafc;
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-input-shadow);
+    outline: none;
+    transition: var(--transition-smooth);
+}
+
+.clay-input:focus, 
+.clay-select:focus,
+.form-group input:focus, 
+.form-group select:focus {
+    background: #ffffff;
+    box-shadow: 
+        inset 2px 2px 4px rgba(79, 70, 229, 0.2),
+        0 0 0 2px rgba(79, 70, 229, 0.3);
+}
+
+.form-group input[readonly] {
+    background: #edf2f7;
+    cursor: default;
+    color: #4a5568;
+}
+
+/* Autocomplete Results */
+.autocomplete-container {
+    position: relative;
+}
+
+.autocomplete-results {
+    display: none;
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: white;
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15), var(--clay-card-shadow);
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+}
+
+.autocomplete-results div {
+    padding: 11px 16px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-bottom: 1px solid #f1f5f9;
+    transition: background 0.15s ease;
+}
+
+.autocomplete-results div:hover {
+    background: var(--primary-bg);
+    color: var(--primary);
+}
+
+.autocomplete-results .highlight {
+    font-weight: 700;
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   BUTTONS (CLAYMORPHISM)
+   ========================================================================== */
+.btn, .clay-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    box-shadow: var(--clay-btn-shadow);
+    transition: var(--transition-smooth);
+    text-decoration: none;
+    user-select: none;
+}
+
+.btn:active, .clay-btn:active {
+    transform: scale(0.97);
+    box-shadow: var(--clay-btn-active-shadow);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    box-shadow: 
+        4px 4px 10px rgba(79, 70, 229, 0.4),
+        -4px -4px 10px rgba(255, 255, 255, 0.9),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    box-shadow: 4px 4px 10px rgba(16, 185, 129, 0.35);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 4px 4px 10px rgba(239, 68, 68, 0.35);
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 1.05rem;
+    border-radius: var(--radius-lg);
+}
+
+/* ==========================================================================
+   PPC SUMMARY SCORECARD (GESTALT PROXIMITY)
+   ========================================================================== */
+.inspection-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 2px dashed #e2e8f0;
+}
+
+.ppc-summary {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.ppc-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-card-shadow);
+    background: white;
+    min-width: 90px;
+}
+
+.ppc-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ppc-value {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.ppc-ok {
+    border-left: 5px solid var(--success);
+    color: var(--success);
+}
+
+.ppc-ng {
+    border-left: 5px solid var(--danger);
+    color: var(--danger);
+}
+
+.ppc-rate {
+    border-left: 5px solid var(--primary);
+    color: var(--primary);
+    background: var(--primary-bg);
+}
+
+/* ==========================================================================
+   INSPECTION TABLE (CLAY ROWS & BUTTONS)
+   ========================================================================== */
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    background: white;
+}
+
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    border: none;
+    background: transparent;
+}
+
+tbody tr {
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    transition: var(--transition-smooth);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+tbody tr:hover {
+    background: #ffffff;
+    box-shadow: var(--clay-card-shadow);
+    transform: translateY(-1px);
+}
+
+tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    border: none;
+}
+
+tbody td:first-child {
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+    font-weight: 800;
+    color: var(--text-muted);
+    font-size: 1rem;
+    width: 60px;
+    text-align: center;
+}
+
+tbody td:last-child {
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+}
+
+/* Status Radio (Clay Toggle) */
+.status-radio-group {
+    display: inline-flex;
+    background: #e2e8f0;
+    padding: 4px;
+    border-radius: var(--radius-xl);
+    box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 4px;
+}
+
+.radio-label {
+    cursor: pointer;
+    margin: 0;
+}
+
+.radio-label input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: var(--radius-xl);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+}
+
+.radio-ok input:checked + .radio-custom {
+    background: var(--success);
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.radio-ng input:checked + .radio-custom {
+    background: var(--danger);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Defect Cell & Tags */
+.defect-input-container {
+    cursor: pointer;
+    min-height: 40px;
+    padding: 6px 12px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    transition: var(--transition-smooth);
+}
+
+.defect-input-container.disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.defect-input-container.enabled {
+    background: white;
+    box-shadow: var(--clay-input-shadow);
+}
+
+.defect-input-container.enabled:hover {
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.3);
+}
+
+.defect-tags-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.defect-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--danger-bg);
+    color: var(--danger);
+    border: 1px solid var(--danger-light);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 700;
+    box-shadow: var(--clay-badge-shadow);
+}
+
+.defect-pos-badge {
+    background: #4f46e5;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+}
+
+.defect-area-badge {
+    background: #f59e0b;
+    color: white;
+    padding: 1px 6px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+}
+
+.placeholder-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-style: italic;
+}
+
+/* Photos in Table */
+.photo-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.photo-gallery {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.thumbnail-wrapper {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    box-shadow: var(--clay-card-shadow);
+}
+
+.thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-photo-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 12px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+.add-photo-btn {
+    background: white;
+    border: 1px dashed #cbd5e1;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--clay-btn-shadow);
+}
+
+.add-photo-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.delete-row-btn {
+    background: #fee2e2;
+    border: none;
+    color: var(--danger);
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: var(--clay-btn-shadow);
+    transition: var(--transition-smooth);
+}
+
+.delete-row-btn:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Actions Section */
+.actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin: 24px 0;
+}
+
+/* Saved Files List */
+.saved-files-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.saved-files-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-card-shadow);
+}
+
+.file-name {
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.file-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.file-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* ==========================================================================
+   CLAY MODAL & DIALOG
+   ========================================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    padding: 16px;
+}
+
+.modal-content {
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    padding: 30px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.2),
+        var(--clay-card-shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+/* NG DEFECT FLOW STYLES */
+.ng-flow-section {
+    margin-bottom: 18px;
+}
+
+.ng-flow-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Clay Position Toggle Group */
+.clay-toggle-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.toggle-option {
+    cursor: pointer;
+    text-align: center;
+    padding: 10px 14px;
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-btn-shadow);
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: var(--transition-smooth);
+    user-select: none;
+}
+
+.toggle-option.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 
+        inset 2px 2px 4px rgba(0, 0, 0, 0.2),
+        0 4px 10px rgba(79, 70, 229, 0.35);
+}
+
+/* Area Chips */
+.area-chips-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 140px;
+    overflow-y: auto;
+    padding: 4px;
+}
+
+.area-chip {
+    padding: 6px 14px;
+    background: #f1f5f9;
+    border-radius: var(--radius-xl);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    box-shadow: var(--clay-badge-shadow);
+    transition: var(--transition-smooth);
+}
+
+.area-chip:hover {
+    background: #e2e8f0;
+}
+
+.area-chip.active {
+    background: #f59e0b;
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+/* List of Added Defects in Modal */
+.current-defects-list {
+    background: #f8fafc;
+    border-radius: var(--radius-md);
+    padding: 12px;
+    box-shadow: var(--clay-input-shadow);
+    min-height: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.current-defect-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--clay-card-shadow);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+/* Loading Overlay */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    color: white;
+    gap: 16px;
+}
+
+.spinner {
+    width: 48px;
+    height: 48px;
+    border: 5px solid rgba(255, 255, 255, 0.2);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ==========================================================================
+   ADMIN PAGE SPECIFIC TABS & TABLES
+   ========================================================================== */
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    background: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    box-shadow: var(--clay-btn-shadow);
+    transition: var(--transition-smooth);
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
+    animation: fadeIn 0.25s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 860px) {
+    .admin-grid-2 {
+        grid-template-columns: 1fr;
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    header.app-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
