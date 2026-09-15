@@ -20,11 +20,18 @@
                 <span class="brand-title" data-i18n="app_title">Line Walk Through</span>
             </div>
             <div class="header-nav">
-                <!-- Language Toggle with Active Flag -->
-                <button id="btn-lang-toggle" class="lang-toggle-btn" title="Ganti Bahasa / Switch Language">
-                    <span id="lang-flag" class="lang-flag">🇮🇩</span>
-                    <span id="lang-code" class="lang-code">ID</span>
-                </button>
+                <!-- Language Toggle Pill Switch (Sesuai Desain Kapsul Hijau/Abu-abu) -->
+                <div class="lang-switch-container" title="Ganti Bahasa / Switch Language">
+                    <button id="btn-lang-toggle" class="lang-switch-pill state-id" type="button" role="switch" aria-checked="false" aria-label="Ganti Bahasa">
+                        <span class="pill-track">
+                            <span class="pill-track-label label-id">ID</span>
+                            <span class="pill-track-label label-en">EN</span>
+                        </span>
+                        <span class="pill-knob">
+                            <span id="knob-flag" class="knob-flag">🇮🇩</span>
+                        </span>
+                    </button>
+                </div>
 
                 <!-- Supabase Cloud Sync Status -->
                 <div class="cloud-status" id="cloud-status-badge">
@@ -39,6 +46,20 @@
         </header>
 
         <main>
+            <!-- Draft Storage Status Bar -->
+            <div class="draft-status-bar" id="draft-status-bar" style="display: none;">
+                <div class="draft-info">
+                    <span class="draft-dot"></span>
+                    <span id="draft-status-text" data-i18n="draft_saved_text">Draf tersimpan di memori</span>
+                    <span id="draft-time" style="font-size: 0.8rem; color: #15803d; font-weight: normal;"></span>
+                </div>
+                <div class="draft-actions">
+                    <button type="button" id="btn-clear-draft" class="btn-clear-draft" title="Kosongkan memori draft">
+                        <span>🗑️</span> <span data-i18n="btn_clear_draft">Hapus Draf</span>
+                    </button>
+                </div>
+            </div>
+
             <!-- Form Section (General Information) -->
             <section class="card form-section">
                 <div class="form-grid">
@@ -109,7 +130,10 @@
             </section>
 
             <!-- Save & Action Buttons -->
-            <div class="actions-bar">
+            <div class="actions-bar" style="display: flex; gap: 14px; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+                <button type="button" id="btn-discard-draft" class="btn btn-secondary btn-lg" style="color: #b91c1c; border-color: #fca5a5;" data-i18n="btn_discard_draft">
+                    <span>🗑️</span> <span>Hapus Draf</span>
+                </button>
                 <button id="save-button" class="btn btn-primary btn-lg" data-i18n="btn_save_inspection">💾 Simpan Data & Selesai Inspeksi</button>
             </div>
 
@@ -232,6 +256,21 @@
                 <button id="btn-finish-close" class="btn btn-secondary" data-i18n="btn_close_new">
                     Tutup & Mulai Inspeksi Baru
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CONFIRM DELETE DRAFT -->
+    <div id="modal-confirm-delete-draft" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="max-width: 440px; text-align: center;">
+            <div style="font-size: 3.2rem; margin-bottom: 12px;">🗑️</div>
+            <h4 class="modal-title" style="margin-bottom: 10px;" data-i18n="modal_clear_draft_title">Hapus Draf Tersimpan?</h4>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 24px;" data-i18n="modal_clear_draft_desc">
+                Tindakan ini akan mengosongkan seluruh input inspeksi, foto defect di memori lokal (IndexedDB), dan draf yang tersimpan di LocalStorage untuk menghemat memori perangkat.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-clear-draft" data-i18n="btn_cancel">Batal</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-clear-draft" data-i18n="btn_confirm_clear">Ya, Hapus Draf</button>
             </div>
         </div>
     </div>

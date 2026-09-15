@@ -21,6 +21,11 @@
                 <span class="brand-badge">ADMIN</span>
             </div>
             <div class="header-nav">
+                <div class="admin-user-badge" id="admin-user-badge" style="display: none;">
+                    <span>👤</span>
+                    <span id="logged-admin-name">admin</span>
+                    <button id="btn-admin-logout" class="btn-logout" title="Keluar dari sesi admin">Keluar</button>
+                </div>
                 <div class="cloud-status" id="cloud-status-badge">
                     <span class="status-dot offline" id="status-dot"></span>
                     <span id="status-text">Memeriksa Supabase...</span>
@@ -34,6 +39,7 @@
             <button class="tab-btn active" data-tab="tab-styles">👟 Style & Model</button>
             <button class="tab-btn" data-tab="tab-master">🏷️ Kategori, Line, Area & Defect</button>
             <button class="tab-btn" data-tab="tab-audit">📋 Audit Trail & Reporting</button>
+            <button class="tab-btn" data-tab="tab-admins">👤 Kelola Admin</button>
             <button class="tab-btn" data-tab="tab-settings">⚙️ Pengaturan Supabase</button>
         </nav>
 
@@ -211,12 +217,112 @@
                     <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: var(--radius-md); box-shadow: var(--clay-input-shadow);">
                         <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">💡 Petunjuk Skema Database</h4>
                         <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6;">
-                            Pastikan Anda sudah menjalankan script <code>schema.sql</code> di menu <strong>SQL Editor</strong> Supabase agar tabel <code>categories</code>, <code>lines</code>, <code>areas</code>, <code>styles</code>, <code>inspections</code>, dan <code>inspection_defects</code> terbuat otomatis.
+                            Pastikan Anda sudah menjalankan script <code>schema.sql</code> di menu <strong>SQL Editor</strong> Supabase agar tabel <code>categories</code>, <code>lines</code>, <code>areas</code>, <code>styles</code>, <code>inspections</code>, <code>inspection_defects</code>, dan <code>admin_users</code> terbuat otomatis.
                         </p>
                     </div>
                 </div>
             </section>
+
+            <!-- TAB 5: ADMIN MANAGEMENT & REGISTRATION -->
+            <section id="tab-admins" class="tab-panel">
+                <div class="card">
+                    <h3 class="card-title">Daftarkan Admin Baru ke Supabase</h3>
+                    <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
+                        Tambahkan akun administrator baru ke tabel <code>admin_users</code> di database Supabase untuk memvalidasi akses panel ini.
+                    </p>
+
+                    <form id="form-register-admin" class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) auto; align-items: flex-end;">
+                        <div class="form-group">
+                            <label for="reg-admin-username">Username</label>
+                            <input type="text" id="reg-admin-username" placeholder="Contoh: audit_lead" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-admin-fullname">Nama Lengkap</label>
+                            <input type="text" id="reg-admin-fullname" placeholder="Contoh: Fajar Yulianto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-admin-password">Password</label>
+                            <input type="password" id="reg-admin-password" placeholder="Minimal 6 karakter" required minlength="6">
+                        </div>
+                        <div class="form-group">
+                            <label for="reg-admin-role">Peran (Role)</label>
+                            <select id="reg-admin-role">
+                                <option value="admin">Admin</option>
+                                <option value="superadmin">Super Administrator</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">➕ Daftarkan Admin</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Daftar Administrator Terdaftar di Supabase</h3>
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 60px;">ID</th>
+                                    <th>Username</th>
+                                    <th>Nama Lengkap</th>
+                                    <th>Peran</th>
+                                    <th>Terdaftar Pada</th>
+                                    <th style="width: 90px; text-align: center;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-admin-users-body">
+                                <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Memuat daftar admin...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card" style="background: #f8fafc;">
+                    <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">📋 Skrip SQL Registrasi Admin (Supabase SQL Editor)</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
+                        File <code>database/admin_auth.sql</code> berisi query lengkap untuk membuat tabel <code>admin_users</code>, Row Level Security (RLS), dan akun default di Supabase SQL Editor.
+                    </p>
+                    <textarea readonly rows="5" class="clay-input" style="font-family: monospace; font-size: 0.8rem; background: #ffffff;">CREATE TABLE IF NOT EXISTS admin_users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    full_name VARCHAR(150),
+    role VARCHAR(50) DEFAULT 'admin',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow anon admin_users" ON admin_users FOR ALL TO anon USING (true) WITH CHECK (true);</textarea>
+                </div>
+            </section>
         </main>
+    </div>
+
+    <!-- ADMIN AUTHENTICATION GATEKEEPER MODAL -->
+    <div id="admin-auth-overlay" class="admin-auth-overlay">
+        <div class="admin-auth-card clay-card">
+            <img src="assets/logo.png" alt="Logo" class="auth-logo">
+            <h2>Login Administrator</h2>
+            <p>Masukkan kredensial admin untuk mengakses panel manajemen</p>
+            
+            <div id="auth-error-msg" class="auth-error-msg"></div>
+
+            <form id="form-admin-login">
+                <div class="form-group" style="margin-bottom: 14px; text-align: left;">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" class="clay-input" placeholder="Ketik username admin..." required autocomplete="username">
+                </div>
+                <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="clay-input" placeholder="Ketik password..." required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="width: 100%; justify-content: center; padding: 12px;">
+                    <span>🔐</span> Masuk ke Panel Admin
+                </button>
+            </form>
+
+            <div style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); background: #f1f5f9; padding: 10px; border-radius: var(--radius-sm);">
+                <span>Default Superadmin: <strong>admin</strong> | Password: <strong>admin123</strong></span>
+            </div>
+        </div>
     </div>
 
     <!-- Detail & Export Modal -->

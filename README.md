@@ -14,28 +14,36 @@ Aplikasi inspeksi sepatu dan audit lini produksi (*Line Walk Through*) berbasis 
    - Skema database relasional: `styles`, `categories`, `lines`, `areas`, `inspections`, dan `inspection_defects`.
    - Penyimpanan cloud otomatis dengan fallback ke IndexedDB & LocalStorage jika offline.
 
-2. **Panel Admin Terpisah (`admin.html`)**:
-   - Dapat diakses tanpa login.
+2. **Panel Admin Terlindungi & Terintegrasi Supabase (`admin.html`)**:
+   - Validasi autentikasi admin sebelum masuk panel dengan enkripsi Web Crypto SHA-256.
+   - Pendaftaran admin baru langsung ke tabel `admin_users` di Supabase.
    - Manajemen Master Style Number & Model (+ tombol sekali klik migrasi 3340+ style bawaan ke Supabase).
    - Manajemen Kategori Validasi (HFPA, FTT, PEAC, dll.).
    - Manajemen Line Produksi (101-116, 201-216, dll.).
-   - Manajemen Master Area Defect Sepatu.
+   - Manajemen Master Area Defect Sepatu & Tipe Defect.
    - Audit Trail & riwayat inspeksi lengkap dengan export laporan.
    - Konfigurasi Supabase URL & Anon Key dengan tombol uji koneksi.
 
-3. **Alur Input Defect NG Bertahap**:
+3. **Mekanisme Hapus Draf & Optimasi Memori**:
+   - Tombol cepat dan modal konfirmasi untuk mengosongkan draf di LocalStorage dan foto di IndexedDB.
+   - Indikator status draf tersimpan secara realtime.
+
+4. **Toggle Switch Bahasa Gaya Kapsul (Pill Switch)**:
+   - Desain interaktif hijau toska (`#3ca686`) dan abu-abu (`#4b4f54`) dengan knob geser bundar berisi bendera aktif (🇮🇩 / 🇬🇧).
+
+5. **Alur Input Defect NG Bertahap**:
    - Ketika status diubah ke **NG**:
      1. Ketik Tipe Defect (manual / rekomendasi datalist).
      2. Pilih Posisi (`Left (L)` / `Right (R)` / `Both (L & R)`).
      3. Pilih Area Sepatu (Toe Box, Vamp, Midsole, Outsole, dll.).
      4. Mendukung penambahan banyak defect dalam 1 pair.
 
-4. **Reporting Format Kebawah (Pivot-Ready)**:
+6. **Reporting Format Kebawah (Pivot-Ready)**:
    - Data defect disimpan dan diekspor dalam format normalisasi baris kebawah (*Tall Format*), bukan kolom kesamping.
    - Sangat mudah diolah langsung dengan Excel Pivot Table.
    - Popup otomatis setelah inspeksi selesai untuk download file Excel (`.xlsx`) dan bundle foto (`.zip`).
 
-5. **Desain Claymorphism 3D & Prinsip Gestalt**:
+7. **Desain Claymorphism 3D & Prinsip Gestalt**:
    - Tampilan visual modern, lembut, dan tactile dengan efek elevasi 3D.
    - Tata letak terstruktur dengan pengelompokan Gestalt (*Proximity* & *Similarity*).
 

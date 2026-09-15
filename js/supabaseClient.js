@@ -594,6 +594,142 @@
                 console.error('Error deleting inspection from Supabase:', e);
                 throw e;
             }
+        },
+
+        // ==========================================
+        // 6. ADMIN AUTHENTICATION & MANAGEMENT
+        // ==========================================
+        async hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        },
+
+        async authenticateAdmin(username, password) {
+            const trimmedUser = (username || '').trim();
+            const passwordHash = await this.hashPassword(password);
+            
+            // 1. Coba verifikasi ke tabel admin_users di Supabase
+            if (supabaseInstance) {
+                try {
+                    const { data, error } = await supabaseInstance
+                        .from('admin_users')
+                        .select('id, username, full_name, role, created_at')
+                        .eq('username', trimmedUser)
+                        .eq('password_hash', passwordHash)
+                        .maybeSingle();
+
+                    if (!error && data) {
+                        return { success: true, user: data, source: 'supabase' };
+                    }
+                } catch (e) {
+                    console.warn('Supabase admin_users lookup error:', e);
+                }
+            }
+
+            // 2. Default Seed Superadmin Check: admin / admin123
+            const defaultAdminHash = '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9';
+            if (trimmedUser.toLowerCase() === 'admin' && passwordHash === defaultAdminHash) {
+                return {
+                    success: true,
+                    user: { id: 1, username: 'admin', full_name: 'Super Administrator', role: 'superadmin' },
+                    source: 'default'
+                };
+            }
+
+            // 3. Fallback ke penyimpanan lokal jika offline
+            const localAdmins = JSON.parse(localStorage.getItem('lwt_local_admins') || '[]');
+            const found = localAdmins.find(a => a.username === trimmedUser && a.password_hash === passwordHash);
+            if (found) {
+                return { success: true, user: found, source: 'local' };
+            }
+
+            return { success: false, error: 'Username atau password salah' };
+        },
+
+        async getAdminUsers() {
+            if (supabaseInstance) {
+                try {
+                    const { data, error } = await supabaseInstance
+                        .from('admin_users')
+                        .select('id, username, full_name, role, created_at')
+                        .order('id', { ascending: true });
+
+                    if (!error && data && data.length > 0) {
+                        return data;
+                    }
+                } catch (e) {
+                    console.warn('Could not fetch admin_users from Supabase:', e);
+                }
+            }
+
+            const localAdmins = JSON.parse(localStorage.getItem('lwt_local_admins') || '[]');
+            return [
+                { id: 1, username: 'admin', full_name: 'Super Administrator (Default)', role: 'superadmin', created_at: new Date().toISOString() },
+                ...localAdmins
+            ];
+        },
+
+        async registerAdmin(username, password, fullName = '', role = 'admin') {
+            const trimmedUser = (username || '').trim();
+            if (!trimmedUser || !password) throw new Error('Username dan password wajib diisi');
+            const passwordHash = await this.hashPassword(password);
+
+            const newAdmin = {
+                username: trimmedUser,
+                password_hash: passwordHash,
+                full_name: fullName.trim() || trimmedUser,
+                role: role || 'admin'
+            };
+
+            let savedInCloud = false;
+            if (supabaseInstance) {
+                try {
+                    const { data, error } = await supabaseInstance
+                        .from('admin_users')
+                        .insert([newAdmin])
+                        .select();
+
+                    if (!error) {
+                        savedInCloud = true;
+                    } else {
+                        console.warn('Supabase insert admin error:', error);
+                    }
+                } catch (e) {
+                    console.warn('Supabase insert admin caught error:', e);
+                }
+            }
+
+            const localAdmins = JSON.parse(localStorage.getItem('lwt_local_admins') || '[]');
+            const filtered = localAdmins.filter(a => a.username !== trimmedUser);
+            filtered.push({ ...newAdmin, id: Date.now(), created_at: new Date().toISOString() });
+            localStorage.setItem('lwt_local_admins', JSON.stringify(filtered));
+
+            return { success: true, savedInCloud };
+        },
+
+        async deleteAdminUser(id, username) {
+            if (username === 'admin') {
+                throw new Error('Akun superadmin default tidak dapat dihapus');
+            }
+
+            if (supabaseInstance && id) {
+                try {
+                    await supabaseInstance
+                        .from('admin_users')
+                        .delete()
+                        .eq('id', id);
+                } catch (e) {
+                    console.warn('Supabase delete admin error:', e);
+                }
+            }
+
+            const localAdmins = JSON.parse(localStorage.getItem('lwt_local_admins') || '[]');
+            const updated = localAdmins.filter(a => a.username !== username && a.id !== id);
+            localStorage.setItem('lwt_local_admins', JSON.stringify(updated));
+            return true;
         }
     };
 

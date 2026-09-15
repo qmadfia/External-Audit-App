@@ -64,6 +64,23 @@ document.addEventListener('DOMContentLoaded', () => {
         cfgSupabaseKey: document.getElementById('cfg-supabase-key'),
         btnTestConnection: document.getElementById('btn-test-connection'),
 
+        // Admin Auth & Management
+        adminAuthOverlay: document.getElementById('admin-auth-overlay'),
+        formAdminLogin: document.getElementById('form-admin-login'),
+        loginUsername: document.getElementById('login-username'),
+        loginPassword: document.getElementById('login-password'),
+        authErrorMsg: document.getElementById('auth-error-msg'),
+        adminUserBadge: document.getElementById('admin-user-badge'),
+        loggedAdminName: document.getElementById('logged-admin-name'),
+        btnAdminLogout: document.getElementById('btn-admin-logout'),
+
+        formRegisterAdmin: document.getElementById('form-register-admin'),
+        regAdminUsername: document.getElementById('reg-admin-username'),
+        regAdminFullname: document.getElementById('reg-admin-fullname'),
+        regAdminPassword: document.getElementById('reg-admin-password'),
+        regAdminRole: document.getElementById('reg-admin-role'),
+        tableAdminUsersBody: document.getElementById('table-admin-users-body'),
+
         // Modal & Overlay
         adminModal: document.getElementById('admin-modal'),
         adminModalTitle: document.getElementById('admin-modal-title'),
@@ -125,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (targetTab === 'tab-styles') loadStyles();
                 if (targetTab === 'tab-master') loadMasterData();
                 if (targetTab === 'tab-audit') loadAuditTrail();
+                if (targetTab === 'tab-admins') loadAdminUsers();
             });
         });
     }
@@ -726,11 +744,168 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
+    // 7. TAB 5: ADMIN AUTHENTICATION & MANAGEMENT
+    // =========================================================================
+    const ADMIN_AUTH_KEY = 'lwt_admin_session';
+
+    function checkAdminSession() {
+        const sessionStr = sessionStorage.getItem(ADMIN_AUTH_KEY);
+        if (sessionStr) {
+            try {
+                const session = JSON.parse(sessionStr);
+                if (session && session.username) {
+                    onAdminAuthenticated(session);
+                    return true;
+                }
+            } catch (e) {}
+        }
+        if (elements.adminAuthOverlay) {
+            elements.adminAuthOverlay.style.display = 'flex';
+        }
+        if (elements.adminUserBadge) {
+            elements.adminUserBadge.style.display = 'none';
+        }
+        return false;
+    }
+
+    function onAdminAuthenticated(session) {
+        if (elements.adminAuthOverlay) {
+            elements.adminAuthOverlay.style.display = 'none';
+        }
+        if (elements.adminUserBadge) {
+            elements.adminUserBadge.style.display = 'inline-flex';
+            elements.loggedAdminName.textContent = `${session.username} (${session.role || 'admin'})`;
+        }
+        loadAdminUsers();
+    }
+
+    if (elements.formAdminLogin) {
+        elements.formAdminLogin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = elements.loginUsername.value.trim();
+            const password = elements.loginPassword.value;
+            elements.authErrorMsg.style.display = 'none';
+
+            showLoading('Memverifikasi kredensial admin...');
+            try {
+                const result = await SupabaseService.authenticateAdmin(username, password);
+                hideLoading();
+                if (result.success) {
+                    const session = {
+                        username: result.user.username,
+                        fullName: result.user.full_name,
+                        role: result.user.role,
+                        source: result.source,
+                        loginTime: Date.now()
+                    };
+                    sessionStorage.setItem(ADMIN_AUTH_KEY, JSON.stringify(session));
+                    onAdminAuthenticated(session);
+                } else {
+                    elements.authErrorMsg.textContent = result.error || 'Username atau password salah!';
+                    elements.authErrorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                hideLoading();
+                elements.authErrorMsg.textContent = 'Gagal verifikasi: ' + (err.message || err);
+                elements.authErrorMsg.style.display = 'block';
+            }
+        });
+    }
+
+    if (elements.btnAdminLogout) {
+        elements.btnAdminLogout.addEventListener('click', () => {
+            sessionStorage.removeItem(ADMIN_AUTH_KEY);
+            window.location.reload();
+        });
+    }
+
+    async function loadAdminUsers() {
+        if (!elements.tableAdminUsersBody) return;
+        elements.tableAdminUsersBody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:16px;">Memuat daftar admin...</td></tr>';
+        try {
+            const admins = await SupabaseService.getAdminUsers();
+            if (!admins || admins.length === 0) {
+                elements.tableAdminUsersBody.innerHTML = '<tr><td colspan="6" style="text-align:center; color: var(--text-muted); padding:16px;">Belum ada admin terdaftar.</td></tr>';
+                return;
+            }
+
+            elements.tableAdminUsersBody.innerHTML = admins.map(a => {
+                const isDefault = a.username === 'admin';
+                const dateStr = a.created_at ? new Date(a.created_at).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '-';
+                return `
+                    <tr>
+                        <td style="font-weight: 700;">${a.id}</td>
+                        <td><strong>${a.username}</strong></td>
+                        <td>${a.full_name || '-'}</td>
+                        <td><span class="badge ${a.role === 'superadmin' ? 'badge-primary' : 'badge-secondary'}" style="font-size:0.75rem;">${a.role || 'admin'}</span></td>
+                        <td style="font-size: 0.85rem; color: var(--text-muted);">${dateStr}</td>
+                        <td style="text-align: center;">
+                            ${isDefault ? '<span style="color: var(--text-muted); font-size: 0.8rem;">Superadmin</span>' : `
+                                <button type="button" class="btn btn-sm btn-danger btn-delete-admin" data-id="${a.id}" data-user="${a.username}" style="padding: 3px 8px; font-size: 0.75rem;">Hapus</button>
+                            `}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            elements.tableAdminUsersBody.querySelectorAll('.btn-delete-admin').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    const username = btn.dataset.user;
+                    if (confirm(`Hapus admin '${username}' dari Supabase?`)) {
+                        showLoading(`Menghapus admin ${username}...`);
+                        try {
+                            await SupabaseService.deleteAdminUser(id, username);
+                            await loadAdminUsers();
+                            alert(`Admin '${username}' berhasil dihapus.`);
+                        } catch (e) {
+                            alert('Gagal menghapus: ' + e.message);
+                        } finally {
+                            hideLoading();
+                        }
+                    }
+                });
+            });
+        } catch (err) {
+            elements.tableAdminUsersBody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#b91c1c; padding:16px;">Gagal memuat admin: ${err.message}</td></tr>`;
+        }
+    }
+
+    if (elements.formRegisterAdmin) {
+        elements.formRegisterAdmin.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = elements.regAdminUsername.value.trim();
+            const fullName = elements.regAdminFullname.value.trim();
+            const password = elements.regAdminPassword.value;
+            const role = elements.regAdminRole.value;
+
+            if (password.length < 6) {
+                alert('Password minimal 6 karakter');
+                return;
+            }
+
+            showLoading(`Mendaftarkan admin '${username}' ke database...`);
+            try {
+                const res = await SupabaseService.registerAdmin(username, password, fullName, role);
+                hideLoading();
+                elements.formRegisterAdmin.reset();
+                await loadAdminUsers();
+                const note = res.savedInCloud ? 'Tersimpan langsung di Supabase Cloud.' : 'Tersimpan di penyimpanan lokal.';
+                alert(`Admin '${username}' berhasil didaftarkan! ${note}`);
+            } catch (err) {
+                hideLoading();
+                alert('Gagal mendaftarkan admin: ' + err.message);
+            }
+        });
+    }
+
+    // =========================================================================
     // INITIALIZATION
     // =========================================================================
     async function init() {
         setupTabs();
         await updateConnectionStatus();
+        checkAdminSession();
         loadStyles();
     }
 

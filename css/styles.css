@@ -804,42 +804,266 @@ tbody td:last-child {
     letter-spacing: 0.3px;
 }
 
-/* Language Toggle Button with Active Flag */
-.lang-toggle-btn {
+/* =========================================================================
+   PILL TOGGLE SWITCH (SESUAI GAMBAR REFERENSI USER)
+   ========================================================================= */
+.lang-switch-container {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 6px 14px;
-    background: #ffffff;
-    border-radius: var(--radius-xl);
-    box-shadow: var(--clay-btn-shadow);
-    font-size: 0.88rem;
-    font-weight: 700;
-    cursor: pointer;
-    border: none;
-    transition: var(--transition-smooth);
     user-select: none;
 }
 
-.lang-toggle-btn:hover {
-    background: #f8fafc;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+.lang-switch-pill {
+    position: relative;
+    width: 68px;
+    height: 36px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    padding: 3px;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2), 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    outline: none;
+    box-sizing: border-box;
 }
 
-.lang-toggle-btn:active {
-    box-shadow: var(--clay-btn-active-shadow);
-    transform: scale(0.97);
+/* State: ID (Hijau Toska #3ca686 sesuai gambar referensi user) */
+.lang-switch-pill.state-id {
+    background-color: #3ca686;
 }
 
-.lang-flag {
-    font-size: 1.15rem;
+/* State: EN (Abu-abu Gelap #4b4f54 sesuai gambar referensi user) */
+.lang-switch-pill.state-en {
+    background-color: #4b4f54;
+}
+
+/* Text label samar di dalam rel switch */
+.pill-track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.85);
+    pointer-events: none;
+    letter-spacing: 0.5px;
+}
+
+.pill-track-label {
+    transition: opacity 0.2s ease;
+}
+
+.lang-switch-pill.state-id .label-en {
+    opacity: 0.9;
+}
+.lang-switch-pill.state-id .label-id {
+    opacity: 0;
+}
+
+.lang-switch-pill.state-en .label-id {
+    opacity: 0.9;
+}
+.lang-switch-pill.state-en .label-en {
+    opacity: 0;
+}
+
+/* Circular Sliding Knob Putih */
+.pill-knob {
+    width: 30px;
+    height: 30px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+/* Posisi Knob: ID di kanan (seperti toggle hijau di gambar), EN di kiri (seperti toggle abu di gambar) */
+.lang-switch-pill.state-id .pill-knob {
+    transform: translateX(32px);
+}
+
+.lang-switch-pill.state-en .pill-knob {
+    transform: translateX(0px);
+}
+
+.knob-flag {
+    font-size: 1.1rem;
     line-height: 1;
+    display: inline-block;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+    transition: transform 0.2s ease;
 }
 
-.lang-code {
+.lang-switch-pill:hover .knob-flag {
+    transform: scale(1.1);
+}
+
+/* =========================================================================
+   DRAFT STATUS & STORAGE PURGE CONTROLS
+   ========================================================================= */
+.draft-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-md);
+    padding: 10px 16px;
+    margin-bottom: 20px;
+    box-shadow: var(--clay-card-shadow);
+    transition: var(--transition-smooth);
+}
+
+.draft-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: #166534;
+    font-weight: 600;
+}
+
+.draft-dot {
+    width: 10px;
+    height: 10px;
+    background: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #22c55e;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+
+.draft-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-clear-draft {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: var(--radius-md);
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.15);
+}
+
+.btn-clear-draft:hover {
+    background: #fecaca;
+    color: #991b1b;
+    transform: scale(1.02);
+}
+
+/* =========================================================================
+   ADMIN AUTH OVERLAY & MODAL
+   ========================================================================= */
+.admin-auth-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 20px;
+}
+
+.admin-auth-card {
+    background: var(--bg-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--clay-card-shadow);
+    width: 100%;
+    max-width: 420px;
+    padding: 34px 28px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    text-align: center;
+    animation: modalPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.admin-auth-card .auth-logo {
+    width: 68px;
+    height: 68px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(37, 99, 235, 0.35);
+    margin-bottom: 16px;
+}
+
+.admin-auth-card h2 {
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--text-primary);
-    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.admin-auth-card p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin-bottom: 22px;
+}
+
+.auth-error-msg {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.admin-user-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    background: #ffffff;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--clay-badge-shadow);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.btn-logout {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 3px 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-logout:hover {
+    background: #fca5a5;
 }
 
 @media (max-width: 600px) {

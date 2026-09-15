@@ -198,3 +198,34 @@ CREATE POLICY "Allow public read-write for inspections" ON inspections FOR ALL T
 
 DROP POLICY IF EXISTS "Allow public read-write for inspection_defects" ON inspection_defects;
 CREATE POLICY "Allow public read-write for inspection_defects" ON inspection_defects FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 9. TABEL ADMIN USERS (Validasi Akses Admin Panel)
+CREATE TABLE IF NOT EXISTS admin_users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL, -- SHA-256 Hex
+    full_name VARCHAR(150),
+    role VARCHAR(50) DEFAULT 'admin',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Allow anon select admin_users" ON admin_users;
+CREATE POLICY "Allow anon select admin_users" ON admin_users FOR SELECT TO anon USING (true);
+DROP POLICY IF EXISTS "Allow anon insert admin_users" ON admin_users;
+CREATE POLICY "Allow anon insert admin_users" ON admin_users FOR INSERT TO anon WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow anon update admin_users" ON admin_users;
+CREATE POLICY "Allow anon update admin_users" ON admin_users FOR UPDATE TO anon USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Allow anon delete admin_users" ON admin_users;
+CREATE POLICY "Allow anon delete admin_users" ON admin_users FOR DELETE TO anon USING (true);
+
+-- Default Superadmin: username 'admin', password 'admin123'
+INSERT INTO admin_users (username, password_hash, full_name, role)
+VALUES (
+    'admin',
+    '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9',
+    'Super Administrator',
+    'superadmin'
+)
+ON CONFLICT (username) DO NOTHING;
+

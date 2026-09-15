@@ -98,7 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
             confirm_partial_inspection: "Inspeksi baru terisi {count} dari {total} pair. Apakah Anda tetap ingin menyimpan?",
             confirm_reset_row: "Reset inspeksi untuk Pair #{pair}?",
             confirm_delete_saved: "Hapus file rekaman lokal ini?",
-            photo_limit_alert: "Maksimal {max} foto per pair."
+            photo_limit_alert: "Maksimal {max} foto per pair.",
+            draft_saved_text: "Draf tersimpan di memori",
+            btn_clear_draft: "Hapus Draf",
+            btn_discard_draft: "Hapus Draf",
+            modal_clear_draft_title: "Hapus Draf Tersimpan?",
+            modal_clear_draft_desc: "Tindakan ini akan mengosongkan seluruh input inspeksi, foto defect di memori lokal (IndexedDB), dan draf yang tersimpan di LocalStorage untuk menghemat memori perangkat.",
+            btn_confirm_clear: "Ya, Hapus Draf"
         },
         en: {
             app_title: "Line Walk Through",
@@ -115,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
             model_ph: "Auto-filled",
             line_label: "Line",
             line_ph: "Select Line...",
-            inspection_heading: "Footwear Inspection Data (20 Pairs)",
+            inspection_heading: "Shoe Inspection Data (20 Pairs)",
             ppc_ok: "Total OK",
             ppc_ng: "Total NG",
             ppc_rate: "PPC Rate",
@@ -124,47 +130,53 @@ document.addEventListener('DOMContentLoaded', () => {
             col_defect: "Defect Details (Type | Position | Area)",
             col_photo: "Defect Photo",
             col_reset: "Reset",
-            btn_save_inspection: "💾 Save Data & Finish Inspection",
+            btn_save_inspection: "💾 Save Data & Complete Inspection",
             saved_title: "Saved Files on Device",
-            saved_limit: "(Maximum 10 local inspections)",
-            no_saved_files: "No inspection files saved on this device yet.",
-            placeholder_ng_fill: "Select 'NG' to fill",
-            placeholder_add_defect: "Click to add defect...",
+            saved_limit: "(Maximum 10 local records)",
+            no_saved_files: "No saved inspection records found on this device.",
+            placeholder_ng_fill: "Select 'NG' to fill details",
+            placeholder_add_defect: "Click to add defects...",
             btn_photo: "+ Photo",
             step1_title: "Defect Type",
             manual_defect_label: "Manual Input (Default)",
             manual_defect_ph: "Type defect name...",
             select_defect_label: "Select from Master List",
-            select_defect_ph: "-- Select Preset Defect --",
+            select_defect_ph: "-- Select Recommended Defect --",
             step2_title: "Select Position",
             pos_left: "Left (L)",
             pos_right: "Right (R)",
             pos_both: "Both (L & R)",
             step3_title: "Select Shoe Area",
             manual_area_label: "Manual Input",
-            manual_area_ph: "Type custom area...",
+            manual_area_ph: "Type area manually...",
             select_area_label: "Select from Master List",
             select_area_ph: "-- Select Shoe Area --",
             btn_add_defect: "+ Add This Defect",
-            defect_list_title: "Defect List for This Pair",
+            defect_list_title: "Defects for This Pair",
             no_defects_yet: "No defects added yet.",
             btn_cancel: "Cancel",
             btn_save_pair: "✓ Save for This Pair",
             btn_confirm: "Confirm",
-            finish_title: "Inspection Completed & Saved Successfully!",
-            finish_desc: "Data has been saved to the system. You can directly download the report in pivot-ready Excel format (tall format).",
-            btn_dl_excel: "📊 Download Excel Report (Tall / Pivot-Ready Format)",
+            finish_title: "Inspection Completed & Saved!",
+            finish_desc: "Data has been recorded. You can now download the inspection report in Excel pivot-ready format (normalized tall format).",
+            btn_dl_excel: "📊 Download Excel Report (Tall / Pivot-Ready)",
             btn_dl_zip: "📦 Download ZIP Bundle (Excel + Defect Photos)",
             btn_close_new: "Close & Start New Inspection",
             alert_fill_auditor: "Please enter Auditor name.",
             alert_select_cat: "Please select Validation Category.",
             alert_fill_style: "Please enter Style Number.",
             alert_select_line: "Please select Line.",
-            alert_defect_required: "Pair #{pair} is set to NG but has no defect details. Please complete it first.",
-            confirm_partial_inspection: "Only {count} of {total} pairs have been inspected. Do you still want to save?",
+            alert_defect_required: "Pair #{pair} is marked NG but has no defect details. Please complete before saving.",
+            confirm_partial_inspection: "Inspection only has {count} of {total} pairs filled. Do you still want to save?",
             confirm_reset_row: "Reset inspection for Pair #{pair}?",
             confirm_delete_saved: "Delete this local inspection record?",
-            photo_limit_alert: "Maximum {max} photos per pair."
+            photo_limit_alert: "Maximum {max} photos per pair.",
+            draft_saved_text: "Draft saved in memory",
+            btn_clear_draft: "Clear Draft",
+            btn_discard_draft: "Clear Draft",
+            modal_clear_draft_title: "Clear Saved Draft?",
+            modal_clear_draft_desc: "This action will clear all inspection inputs, defect photos in local memory (IndexedDB), and saved draft in LocalStorage to free up device memory.",
+            btn_confirm_clear: "Yes, Clear Draft"
         }
     };
 
@@ -173,8 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     const DOMElements = {
         btnLangToggle: document.getElementById('btn-lang-toggle'),
-        langFlag: document.getElementById('lang-flag'),
-        langCode: document.getElementById('lang-code'),
+        knobFlag: document.getElementById('knob-flag'),
 
         statusDot: document.getElementById('status-dot'),
         statusText: document.getElementById('status-text'),
@@ -187,6 +198,16 @@ document.addEventListener('DOMContentLoaded', () => {
         dataEntryBody: document.getElementById('data-entry-body'),
         saveButton: document.getElementById('save-button'),
         savedFilesList: document.getElementById('saved-files-list'),
+
+        // Draft Storage Elements
+        draftStatusBar: document.getElementById('draft-status-bar'),
+        draftStatusText: document.getElementById('draft-status-text'),
+        draftTime: document.getElementById('draft-time'),
+        btnClearDraft: document.getElementById('btn-clear-draft'),
+        btnDiscardDraft: document.getElementById('btn-discard-draft'),
+        modalConfirmDeleteDraft: document.getElementById('modal-confirm-delete-draft'),
+        btnCancelClearDraft: document.getElementById('btn-cancel-clear-draft'),
+        btnConfirmClearDraft: document.getElementById('btn-confirm-clear-draft'),
         
         // PPC Stats
         ppcTotalOk: document.getElementById('ppc-total-ok'),
@@ -241,18 +262,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // =========================================================================
-    // 4. LANGUAGE SYSTEM (i18n WITH ACTIVE FLAG TOGGLE)
+    // 4. LANGUAGE SYSTEM (i18n WITH PILL SWITCH)
     // =========================================================================
     function setLanguage(lang) {
         currentLang = lang;
         localStorage.setItem('lwt_language', lang);
 
-        if (lang === 'id') {
-            DOMElements.langFlag.textContent = '🇮🇩';
-            DOMElements.langCode.textContent = 'ID';
-        } else {
-            DOMElements.langFlag.textContent = '🇬🇧';
-            DOMElements.langCode.textContent = 'EN';
+        if (DOMElements.btnLangToggle) {
+            if (lang === 'id') {
+                DOMElements.btnLangToggle.classList.remove('state-en');
+                DOMElements.btnLangToggle.classList.add('state-id');
+                if (DOMElements.knobFlag) DOMElements.knobFlag.textContent = '🇮🇩';
+            } else {
+                DOMElements.btnLangToggle.classList.remove('state-id');
+                DOMElements.btnLangToggle.classList.add('state-en');
+                if (DOMElements.knobFlag) DOMElements.knobFlag.textContent = '🇬🇧';
+            }
         }
 
         const t = translations[lang];
@@ -296,10 +321,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    DOMElements.btnLangToggle.addEventListener('click', () => {
-        const nextLang = currentLang === 'id' ? 'en' : 'id';
-        setLanguage(nextLang);
-    });
+    if (DOMElements.btnLangToggle) {
+        DOMElements.btnLangToggle.addEventListener('click', () => {
+            const nextLang = currentLang === 'id' ? 'en' : 'id';
+            setLanguage(nextLang);
+        });
+    }
 
     // =========================================================================
     // 5. INDEXEDDB SETUP (LOCAL BACKUP)
@@ -943,6 +970,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================================================
     // 12. AUTO-SAVE & DRAFT RESTORATION
     // =========================================================================
+    function updateDraftStatusBar(timestamp) {
+        if (!DOMElements.draftStatusBar) return;
+        if (timestamp) {
+            DOMElements.draftStatusBar.style.display = 'flex';
+            if (DOMElements.draftTime) {
+                const dateObj = new Date(timestamp);
+                const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                DOMElements.draftTime.textContent = `(${timeStr})`;
+            }
+        } else {
+            DOMElements.draftStatusBar.style.display = 'none';
+        }
+    }
+
     function saveDraftToLocalStorage(immediate = false) {
         const doSave = async () => {
             const draftData = {
@@ -957,11 +998,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 pairs: []
             };
 
+            let hasContent = !!(draftData.form.auditor || draftData.form.styleNumber || draftData.form.line);
+
             const photoSavePromises = [];
             DOMElements.dataEntryBody.querySelectorAll('tr').forEach(tr => {
                 const photos = JSON.parse(tr.dataset.photos || '[]');
                 const checked = tr.querySelector('.status-radio:checked');
                 const statusValue = checked ? checked.value : '';
+
+                if (statusValue || photos.length > 0 || (tr.dataset.defects && tr.dataset.defects !== '[]')) {
+                    hasContent = true;
+                }
 
                 draftData.pairs.push({
                     pairNumber: tr.dataset.pairNumber,
@@ -975,7 +1022,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             await Promise.all(photoSavePromises);
-            localStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
+            
+            if (hasContent) {
+                try {
+                    localStorage.setItem(DRAFT_KEY, JSON.stringify(draftData));
+                    updateDraftStatusBar(draftData.timestamp);
+                } catch (err) {
+                    console.warn('LocalStorage quota exceeded saat menyimpan draft:', err);
+                }
+            }
         };
 
         if (immediate) {
@@ -1028,6 +1083,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             calculatePPCRate();
+            updateDraftStatusBar(data.timestamp || Date.now());
         } catch (err) {
             console.warn('Error restoring draft:', err);
         }
@@ -1036,6 +1092,76 @@ document.addEventListener('DOMContentLoaded', () => {
     async function clearDraft() {
         localStorage.removeItem(DRAFT_KEY);
         await clearAllDraftPhotos();
+        updateDraftStatusBar(null);
+    }
+
+    async function handleFullResetDraft() {
+        await clearDraft();
+
+        // Reset Header
+        DOMElements.auditor.value = '';
+        DOMElements.validationCategory.value = '';
+        DOMElements.styleNumberInput.value = '';
+        DOMElements.model.value = '';
+        DOMElements.line.value = '';
+
+        // Reset Table Rows
+        DOMElements.dataEntryBody.querySelectorAll('tr').forEach(tr => {
+            tr.querySelectorAll('.status-radio').forEach(r => r.checked = false);
+            tr.dataset.defects = '[]';
+            tr.dataset.photos = '[]';
+
+            const defectContainer = tr.querySelector('.defect-input-container');
+            const addPhotoBtn = tr.querySelector('.add-photo-btn');
+            if (defectContainer) {
+                defectContainer.classList.remove('enabled');
+                defectContainer.classList.add('disabled');
+            }
+            if (addPhotoBtn) {
+                addPhotoBtn.style.display = 'none';
+            }
+
+            updateDefectTags(tr);
+            updatePhotoGallery(tr);
+        });
+
+        calculatePPCRate();
+
+        if (DOMElements.modalConfirmDeleteDraft) {
+            DOMElements.modalConfirmDeleteDraft.style.display = 'none';
+        }
+
+        const msg = currentLang === 'id' ? 'Draf berhasil dihapus & memori lokal dibersihkan.' : 'Draft successfully cleared and local memory freed.';
+        alert(msg);
+    }
+
+    // Event listeners untuk hapus draf
+    if (DOMElements.btnClearDraft) {
+        DOMElements.btnClearDraft.addEventListener('click', () => {
+            if (DOMElements.modalConfirmDeleteDraft) {
+                DOMElements.modalConfirmDeleteDraft.style.display = 'flex';
+            }
+        });
+    }
+
+    if (DOMElements.btnDiscardDraft) {
+        DOMElements.btnDiscardDraft.addEventListener('click', () => {
+            if (DOMElements.modalConfirmDeleteDraft) {
+                DOMElements.modalConfirmDeleteDraft.style.display = 'flex';
+            }
+        });
+    }
+
+    if (DOMElements.btnCancelClearDraft) {
+        DOMElements.btnCancelClearDraft.addEventListener('click', () => {
+            if (DOMElements.modalConfirmDeleteDraft) {
+                DOMElements.modalConfirmDeleteDraft.style.display = 'none';
+            }
+        });
+    }
+
+    if (DOMElements.btnConfirmClearDraft) {
+        DOMElements.btnConfirmClearDraft.addEventListener('click', handleFullResetDraft);
     }
 
     // Auto-save listeners on form header
