@@ -21,11 +21,15 @@
         'Inner Box / Packaging', 'Other'
     ];
 
+    // Default Supabase Project Credentials
+    const DEFAULT_SUPABASE_URL = 'https://erhozdfadachjoexwrle.supabase.co';
+    const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyaG96ZGZhZGFjaGpvZXh3cmxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MzUxNTAsImV4cCI6MjEwNTAxMTE1MH0.1PUtuSQz3LA8RzPTG7z_rCzYAWD8zYngdxbSjyPtr1M';
+
     let supabaseInstance = null;
 
     function getCredentials() {
-        const url = localStorage.getItem(STORAGE_KEY_URL) || window.__SUPABASE_URL || '';
-        const key = localStorage.getItem(STORAGE_KEY_KEY) || window.__SUPABASE_ANON_KEY || '';
+        const url = localStorage.getItem(STORAGE_KEY_URL) || window.__SUPABASE_URL || DEFAULT_SUPABASE_URL;
+        const key = localStorage.getItem(STORAGE_KEY_KEY) || window.__SUPABASE_ANON_KEY || DEFAULT_SUPABASE_KEY;
         return { url: url.trim(), key: key.trim() };
     }
 
