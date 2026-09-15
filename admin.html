@@ -319,26 +319,6 @@
                         </table>
                     </div>
                 </div>
-
-                <div class="card" style="background: #f8fafc;">
-                    <h4 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 8px;">📋 Skrip SQL Registrasi Admin
-                        (Supabase SQL Editor)</h4>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 12px;">
-                        File <code>database/admin_auth.sql</code> berisi query lengkap untuk membuat tabel
-                        <code>admin_users</code>, Row Level Security (RLS), dan akun default di Supabase SQL Editor.
-                    </p>
-                    <textarea readonly rows="5" class="clay-input"
-                        style="font-family: monospace; font-size: 0.8rem; background: #ffffff;">CREATE TABLE IF NOT EXISTS admin_users (
-    id BIGSERIAL PRIMARY KEY,
-    username VARCHAR(100) UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    full_name VARCHAR(150),
-    role VARCHAR(50) DEFAULT 'admin',
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Allow anon admin_users" ON admin_users FOR ALL TO anon USING (true) WITH CHECK (true);</textarea>
-                </div>
             </section>
         </main>
     </div>
